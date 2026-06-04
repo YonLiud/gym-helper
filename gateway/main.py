@@ -1,0 +1,67 @@
+import os
+
+import httpx
+from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.responses import Response
+from jose import JWTError, jwt
+
+JWT_SECRET = os.environ["JWT_SECRET"]
+JWT_ALGORITHM = "HS256"
+
+UPSTREAM = {
+    "auth":     os.environ["AUTH_URL"],
+    "exercise": os.environ["EXERCISE_URL"],
+    "gym":      os.environ["GYM_URL"],
+    "workout":  os.environ["WORKOUT_URL"],
+}
+
+_HOP_BY_HOP = {"host", "content-length", "transfer-encoding", "connection"}
+
+app = FastAPI()
+
+
+def get_current_user(request: Request) -> dict:
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing token")
+    try:
+        payload = jwt.decode(auth_header[7:], JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return {"user_id": payload["sub"], "username": payload["username"]}
+    except (JWTError, KeyError):
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+async def _proxy(path: str, request: Request, extra_headers: dict = {}) -> Response:
+    service = path.split("/")[0]
+    upstream = UPSTREAM.get(service)
+    if upstream is None:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    headers = {k: v for k, v in request.headers.items() if k.lower() not in _HOP_BY_HOP}
+    headers.update(extra_headers)
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.request(
+            method=request.method,
+            url=f"{upstream}/{path}",
+            headers=headers,
+            content=await request.body(),
+            params=request.query_params,
+        )
+
+    return Response(
+        content=resp.content,
+        status_code=resp.status_code,
+        headers={k: v for k, v in resp.headers.items() if k.lower() not in _HOP_BY_HOP},
+        media_type=resp.headers.get("content-type"),
+    )
+
+
+@app.api_route("/auth/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def public_routes(path: str, request: Request):
+    return await _proxy(f"auth/{path}", request)
+
+
+@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def protected_routes(path: str, request: Request, user: dict = Depends(get_current_user)):
+    return await _proxy(path, request, {"X-User-Id": user["user_id"], "X-Username": user["username"]})
