@@ -2,19 +2,16 @@ import os
 from contextlib import asynccontextmanager
 
 import asyncpg
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import Base, engine, get_db
-from schemas import LoginRequest, RegisterRequest, TokenResponse
+from schemas import LoginRequest, RegisterRequest, UserResponse
 from service import authenticate_user, create_token, register_user
 
 REGISTER_KEY = os.environ["REGISTER_KEY"]
-
-
-def verify_register_key(x_register_key: str = Header()):
-    if x_register_key != REGISTER_KEY:
-        raise HTTPException(status_code=403, detail="Invalid register key")
+SECURE_COOKIE = os.getenv("SECURE_COOKIE", "true") == "true"
+COOKIE_MAX_AGE = 60 * 60 * 24  # 24 hours
 
 
 async def _ensure_database():
@@ -42,17 +39,41 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.post("/auth/register", response_model=TokenResponse, status_code=201)
-async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db), _: None = Depends(verify_register_key)):
+def _set_auth_cookie(response: Response, token: str):
+    response.set_cookie(
+        key="token",
+        value=token,
+        httponly=True,
+        samesite="strict",
+        secure=SECURE_COOKIE,
+        max_age=COOKIE_MAX_AGE,
+    )
+
+
+def verify_register_key(x_register_key: str = Header()):
+    if x_register_key != REGISTER_KEY:
+        raise HTTPException(status_code=403, detail="Invalid register key")
+
+
+@app.post("/auth/register", response_model=UserResponse, status_code=201)
+async def register(req: RegisterRequest, response: Response, db: AsyncSession = Depends(get_db), _: None = Depends(verify_register_key)):
     user = await register_user(req.username, req.password, db)
     if not user:
         raise HTTPException(status_code=409, detail="Username already taken")
-    return TokenResponse(access_token=create_token(str(user.id), user.username))
+    _set_auth_cookie(response, create_token(str(user.id), user.username))
+    return UserResponse(username=user.username)
 
 
-@app.post("/auth/login", response_model=TokenResponse)
-async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
+@app.post("/auth/login", response_model=UserResponse)
+async def login(req: LoginRequest, response: Response, db: AsyncSession = Depends(get_db)):
     user = await authenticate_user(req.username, req.password, db)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    return TokenResponse(access_token=create_token(str(user.id), user.username))
+    _set_auth_cookie(response, create_token(str(user.id), user.username))
+    return UserResponse(username=user.username)
+
+
+@app.post("/auth/logout")
+async def logout(response: Response):
+    response.delete_cookie("token")
+    return {"message": "logged out"}

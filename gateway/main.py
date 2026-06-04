@@ -21,11 +21,11 @@ app = FastAPI()
 
 
 def get_current_user(request: Request) -> dict:
-    auth_header = request.headers.get("Authorization", "")
-    if not auth_header.startswith("Bearer "):
+    token = request.cookies.get("token")
+    if not token:
         raise HTTPException(status_code=401, detail="Missing token")
     try:
-        payload = jwt.decode(auth_header[7:], JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         return {"user_id": payload["sub"], "username": payload["username"]}
     except (JWTError, KeyError):
         raise HTTPException(status_code=401, detail="Invalid token")

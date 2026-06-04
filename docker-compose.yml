@@ -43,6 +43,7 @@ services:
       DATABASE_URL: postgresql://gymhelper:gymhelper@postgres:5432/auth_db
       JWT_SECRET: ${JWT_SECRET}
       REGISTER_KEY: ${REGISTER_KEY}
+      SECURE_COOKIE: ${SECURE_COOKIE:-false}
     networks:
       - internal
     depends_on:
