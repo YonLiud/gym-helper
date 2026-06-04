@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import datetime, timedelta, UTC
 
 from jose import jwt
@@ -13,6 +14,17 @@ JWT_ALGORITHM = "HS256"
 JWT_EXPIRE_MINUTES = 60 * 24
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+async def register_user(username: str, password: str, db: AsyncSession) -> User | None:
+    result = await db.execute(select(User).where(User.username == username))
+    if result.scalar_one_or_none():
+        return None
+    user = User(id=uuid.uuid4(), username=username, password_hash=pwd_context.hash(password))
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return user
 
 
 async def authenticate_user(username: str, password: str, db: AsyncSession) -> User | None:

@@ -2,12 +2,19 @@ import os
 from contextlib import asynccontextmanager
 
 import asyncpg
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import Base, engine, get_db
-from schemas import LoginRequest, TokenResponse
-from service import authenticate_user, create_token
+from schemas import LoginRequest, RegisterRequest, TokenResponse
+from service import authenticate_user, create_token, register_user
+
+REGISTER_KEY = os.environ["REGISTER_KEY"]
+
+
+def verify_register_key(x_register_key: str = Header()):
+    if x_register_key != REGISTER_KEY:
+        raise HTTPException(status_code=403, detail="Invalid register key")
 
 
 async def _ensure_database():
@@ -33,6 +40,14 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+
+@app.post("/auth/register", response_model=TokenResponse, status_code=201)
+async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db), _: None = Depends(verify_register_key)):
+    user = await register_user(req.username, req.password, db)
+    if not user:
+        raise HTTPException(status_code=409, detail="Username already taken")
+    return TokenResponse(access_token=create_token(str(user.id), user.username))
 
 
 @app.post("/auth/login", response_model=TokenResponse)
