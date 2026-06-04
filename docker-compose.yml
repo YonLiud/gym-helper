@@ -1,0 +1,97 @@
+services:
+  frontend:
+    build: ./frontend/gym-helper-frontend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=Host(`gym.yxnliu.net`)
+      - traefik.http.routers.frontend.entrypoints=web
+      - traefik.http.services.frontend.loadbalancer.server.port=80
+    networks:
+      - proxy
+    depends_on:
+      - gateway
+
+  gateway:
+    build: ./gateway
+    environment:
+      AUTH_URL: http://auth:8000
+      EXERCISE_URL: http://exercise:8000
+      GYM_URL: http://gym:8000
+      WORKOUT_URL: http://workout:8000
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8000:8000"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gateway.rule=Host(`gym.yxnliu.net`) && PathPrefix(`/api`)
+      - traefik.http.routers.gateway.entrypoints=web
+      - traefik.http.routers.gateway.middlewares=strip-api
+      - traefik.http.middlewares.strip-api.stripprefix.prefixes=/api
+      - traefik.http.services.gateway.loadbalancer.server.port=8000
+    networks:
+      - proxy
+      - internal
+    depends_on:
+      - auth
+      - exercise
+      - gym
+      - workout
+
+  auth:
+    build: ./auth
+    environment:
+      DATABASE_URL: postgresql://gymhelper:gymhelper@postgres:5432/auth_db
+      JWT_SECRET: ${JWT_SECRET}
+    networks:
+      - internal
+    depends_on:
+      - postgres
+
+  exercise:
+    build: ./exercise
+    environment:
+      DATABASE_URL: postgresql://gymhelper:gymhelper@postgres:5432/exercise_db
+    networks:
+      - internal
+    depends_on:
+      - postgres
+
+  gym:
+    build: ./gym
+    environment:
+      DATABASE_URL: postgresql://gymhelper:gymhelper@postgres:5432/gym_db
+    networks:
+      - internal
+    depends_on:
+      - postgres
+
+  workout:
+    build: ./workout
+    environment:
+      DATABASE_URL: postgresql://gymhelper:gymhelper@postgres:5432/workout_db
+    networks:
+      - internal
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: gymhelper
+      POSTGRES_PASSWORD: gymhelper
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - internal
+
+volumes:
+  postgres_data:
+
+networks:
+  proxy:
+    external: true
+  internal:
+    internal: true
