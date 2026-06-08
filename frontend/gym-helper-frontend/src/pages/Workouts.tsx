@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ChevronRight, MapPin } from 'lucide-react'
 import { useMemo } from 'react'
-import { Alert, EmptyState, PageHeader, Spinner } from '../components'
+import { Alert, EmptyState, PageHeader, Skeleton, WorkoutCardSkeleton } from '../components'
 import { useExercises } from '../hooks/useExercises'
 import { useGyms } from '../hooks/useGyms'
 import { useWorkouts } from '../hooks/useWorkouts'
@@ -105,8 +105,11 @@ export function WorkoutsPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Spinner />
+      <div className="space-y-4">
+        <Skeleton className="h-7 w-36 mb-6" />
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => <WorkoutCardSkeleton key={i} />)}
+        </div>
       </div>
     )
   }

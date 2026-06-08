@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { ArrowLeft, ChevronRight, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { Alert, Button, Select, Spinner } from '../components'
+import { Alert, Button, Select, Skeleton } from '../components'
 import { useExercises } from '../hooks/useExercises'
 import { useWorkout, useWorkouts } from '../hooks/useWorkouts'
 import type { WorkoutSet } from '../types'
@@ -128,8 +128,19 @@ export function WorkoutDetailPage() {
 
   if (loading || view === null) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Spinner />
+      <div className="mx-auto max-w-lg space-y-5">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-8.5 w-8.5 shrink-0" />
+          <Skeleton className="h-5 w-32" />
+        </div>
+        <Skeleton className="h-12 w-full" />
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="rounded-[14px] border border-(--border) bg-(--surface) p-4 space-y-3">
+            <Skeleton className="h-4 w-1/3" />
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-2/3" />
+          </div>
+        ))}
       </div>
     )
   }

@@ -1,6 +1,6 @@
 import { MapPin, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
-import { Alert, Button, Spinner } from '../components'
+import { Alert, Button, GymCardSkeleton, Skeleton } from '../components'
 import { useGyms } from '../hooks/useGyms'
 import type { Gym, GymInput } from '../types'
 
@@ -142,8 +142,11 @@ export function GymsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Spinner />
+      <div className="space-y-4">
+        <Skeleton className="h-7 w-20 mb-2" />
+        <div className="space-y-2">
+          {Array.from({ length: 3 }).map((_, i) => <GymCardSkeleton key={i} />)}
+        </div>
       </div>
     )
   }

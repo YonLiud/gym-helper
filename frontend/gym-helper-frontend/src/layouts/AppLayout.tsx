@@ -27,6 +27,7 @@ function NavItem({ to, label, Icon }: { to: string; label: string; Icon: LucideI
 export function AppLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const pathname = useRouterState({ select: s => s.location.pathname })
   const [menuOpen, setMenuOpen] = useState(false)
   const [menuClosing, setMenuClosing] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -108,7 +109,9 @@ export function AppLayout() {
       </header>
 
       <main className="flex-1 px-5 py-6" style={{ paddingBottom: 'max(112px, calc(112px + env(safe-area-inset-bottom)))' }}>
-        <Outlet />
+        <div key={pathname} className="animate-[page-in_220ms_ease-out]">
+          <Outlet />
+        </div>
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[#1e1e1e] bg-(--bg)">

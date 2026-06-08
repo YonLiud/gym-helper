@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronUp, Plus, Sparkles, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { Alert, Button, Select, Spinner } from '../components'
+import { Alert, Button, ExerciseGroupSkeleton, Select, Skeleton } from '../components'
 import { useExercises } from '../hooks/useExercises'
 import type { ExerciseInput } from '../types'
 
@@ -142,8 +142,11 @@ export function ExercisesPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Spinner />
+      <div className="space-y-4">
+        <Skeleton className="h-7 w-32 mb-2" />
+        <div className="space-y-2">
+          {Array.from({ length: 6 }).map((_, i) => <ExerciseGroupSkeleton key={i} />)}
+        </div>
       </div>
     )
   }
