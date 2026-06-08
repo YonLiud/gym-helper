@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import Base, engine, get_db
 from schemas import ExerciseCreate, ExerciseResponse
-from service import create_exercise, get_exercise, list_exercises
+from service import create_exercise, delete_exercise, get_exercise, list_exercises, seed_defaults
 
 
 async def _ensure_database():
@@ -55,7 +55,10 @@ async def create_exercise_route(
     user_id: uuid.UUID = Depends(get_user_id),
     db: AsyncSession = Depends(get_db),
 ):
-    return await create_exercise(user_id, body, db)
+    exercise = await create_exercise(user_id, body, db)
+    if not exercise:
+        raise HTTPException(status_code=409, detail="An exercise with that name already exists")
+    return exercise
 
 
 @app.get("/{exercise_id}", response_model=ExerciseResponse)
@@ -68,3 +71,21 @@ async def get_exercise_route(
     if not exercise:
         raise HTTPException(status_code=404, detail="Exercise not found")
     return exercise
+
+
+@app.delete("/{exercise_id}", status_code=204)
+async def delete_exercise_route(
+    exercise_id: uuid.UUID,
+    user_id: uuid.UUID = Depends(get_user_id),
+    db: AsyncSession = Depends(get_db),
+):
+    if not await delete_exercise(exercise_id, user_id, db):
+        raise HTTPException(status_code=404, detail="Exercise not found")
+
+
+@app.post("/defaults", response_model=list[ExerciseResponse], status_code=201)
+async def seed_defaults_route(
+    user_id: uuid.UUID = Depends(get_user_id),
+    db: AsyncSession = Depends(get_db),
+):
+    return await seed_defaults(user_id, db)
