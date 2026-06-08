@@ -40,7 +40,7 @@ def get_user_id(x_user_id: str = Header()) -> uuid.UUID:
     return uuid.UUID(x_user_id)
 
 
-@app.get("/exercises", response_model=list[ExerciseResponse])
+@app.get("/", response_model=list[ExerciseResponse])
 async def list_exercises_route(
     muscle_group: str | None = None,
     user_id: uuid.UUID = Depends(get_user_id),
@@ -49,7 +49,7 @@ async def list_exercises_route(
     return await list_exercises(user_id, muscle_group, db)
 
 
-@app.post("/exercises", response_model=ExerciseResponse, status_code=201)
+@app.post("/", response_model=ExerciseResponse, status_code=201)
 async def create_exercise_route(
     body: ExerciseCreate,
     user_id: uuid.UUID = Depends(get_user_id),
@@ -58,7 +58,7 @@ async def create_exercise_route(
     return await create_exercise(user_id, body, db)
 
 
-@app.get("/exercises/{exercise_id}", response_model=ExerciseResponse)
+@app.get("/{exercise_id}", response_model=ExerciseResponse)
 async def get_exercise_route(
     exercise_id: uuid.UUID,
     user_id: uuid.UUID = Depends(get_user_id),

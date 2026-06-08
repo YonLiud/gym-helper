@@ -55,7 +55,7 @@ def verify_register_key(x_register_key: str = Header()):
         raise HTTPException(status_code=403, detail="Invalid register key")
 
 
-@app.post("/auth/register", response_model=UserResponse, status_code=201)
+@app.post("/register", response_model=UserResponse, status_code=201)
 async def register(req: RegisterRequest, response: Response, db: AsyncSession = Depends(get_db), _: None = Depends(verify_register_key)):
     user = await register_user(req.username, req.password, db)
     if not user:
@@ -64,7 +64,7 @@ async def register(req: RegisterRequest, response: Response, db: AsyncSession = 
     return UserResponse(username=user.username)
 
 
-@app.post("/auth/login", response_model=UserResponse)
+@app.post("/login", response_model=UserResponse)
 async def login(req: LoginRequest, response: Response, db: AsyncSession = Depends(get_db)):
     user = await authenticate_user(req.username, req.password, db)
     if not user:
@@ -73,7 +73,7 @@ async def login(req: LoginRequest, response: Response, db: AsyncSession = Depend
     return UserResponse(username=user.username)
 
 
-@app.post("/auth/logout")
+@app.post("/logout")
 async def logout(response: Response):
     response.delete_cookie("token")
     return {"message": "logged out"}

@@ -40,7 +40,7 @@ def get_user_id(x_user_id: str = Header()) -> uuid.UUID:
     return uuid.UUID(x_user_id)
 
 
-@app.get("/workouts", response_model=list[WorkoutResponse])
+@app.get("/", response_model=list[WorkoutResponse])
 async def list_workouts_route(
     gym_id: uuid.UUID | None = None,
     user_id: uuid.UUID = Depends(get_user_id),
@@ -49,7 +49,7 @@ async def list_workouts_route(
     return await list_workouts(user_id, gym_id, db)
 
 
-@app.post("/workouts", response_model=WorkoutResponse, status_code=201)
+@app.post("/", response_model=WorkoutResponse, status_code=201)
 async def create_workout_route(
     body: WorkoutCreate,
     user_id: uuid.UUID = Depends(get_user_id),
@@ -58,7 +58,7 @@ async def create_workout_route(
     return await create_workout(user_id, body, db)
 
 
-@app.get("/workouts/{workout_id}", response_model=WorkoutResponse)
+@app.get("/{workout_id}", response_model=WorkoutResponse)
 async def get_workout_route(
     workout_id: uuid.UUID,
     user_id: uuid.UUID = Depends(get_user_id),
@@ -70,7 +70,7 @@ async def get_workout_route(
     return workout
 
 
-@app.delete("/workouts/{workout_id}", status_code=204)
+@app.delete("/{workout_id}", status_code=204)
 async def delete_workout_route(
     workout_id: uuid.UUID,
     user_id: uuid.UUID = Depends(get_user_id),
@@ -80,7 +80,7 @@ async def delete_workout_route(
         raise HTTPException(status_code=404, detail="Workout not found")
 
 
-@app.post("/workouts/{workout_id}/sets", response_model=SetResponse, status_code=201)
+@app.post("/{workout_id}/sets", response_model=SetResponse, status_code=201)
 async def add_set_route(
     workout_id: uuid.UUID,
     body: SetCreate,
@@ -93,7 +93,7 @@ async def add_set_route(
     return s
 
 
-@app.put("/workouts/{workout_id}/sets/{set_id}", response_model=SetResponse)
+@app.put("/{workout_id}/sets/{set_id}", response_model=SetResponse)
 async def update_set_route(
     workout_id: uuid.UUID,
     set_id: uuid.UUID,
@@ -107,7 +107,7 @@ async def update_set_route(
     return s
 
 
-@app.delete("/workouts/{workout_id}/sets/{set_id}", status_code=204)
+@app.delete("/{workout_id}/sets/{set_id}", status_code=204)
 async def delete_set_route(
     workout_id: uuid.UUID,
     set_id: uuid.UUID,

@@ -40,17 +40,17 @@ def get_user_id(x_user_id: str = Header()) -> uuid.UUID:
     return uuid.UUID(x_user_id)
 
 
-@app.get("/gyms", response_model=list[GymResponse])
+@app.get("/", response_model=list[GymResponse])
 async def list_gyms_route(user_id: uuid.UUID = Depends(get_user_id), db: AsyncSession = Depends(get_db)):
     return await list_gyms(user_id, db)
 
 
-@app.post("/gyms", response_model=GymResponse, status_code=201)
+@app.post("/", response_model=GymResponse, status_code=201)
 async def create_gym_route(body: GymCreate, user_id: uuid.UUID = Depends(get_user_id), db: AsyncSession = Depends(get_db)):
     return await create_gym(user_id, body, db)
 
 
-@app.get("/gyms/{gym_id}", response_model=GymResponse)
+@app.get("/{gym_id}", response_model=GymResponse)
 async def get_gym_route(gym_id: uuid.UUID, user_id: uuid.UUID = Depends(get_user_id), db: AsyncSession = Depends(get_db)):
     gym = await get_gym(gym_id, user_id, db)
     if not gym:
@@ -58,7 +58,7 @@ async def get_gym_route(gym_id: uuid.UUID, user_id: uuid.UUID = Depends(get_user
     return gym
 
 
-@app.put("/gyms/{gym_id}", response_model=GymResponse)
+@app.put("/{gym_id}", response_model=GymResponse)
 async def update_gym_route(gym_id: uuid.UUID, body: GymUpdate, user_id: uuid.UUID = Depends(get_user_id), db: AsyncSession = Depends(get_db)):
     gym = await update_gym(gym_id, user_id, body, db)
     if not gym:
@@ -66,7 +66,7 @@ async def update_gym_route(gym_id: uuid.UUID, body: GymUpdate, user_id: uuid.UUI
     return gym
 
 
-@app.delete("/gyms/{gym_id}", status_code=204)
+@app.delete("/{gym_id}", status_code=204)
 async def delete_gym_route(gym_id: uuid.UUID, user_id: uuid.UUID = Depends(get_user_id), db: AsyncSession = Depends(get_db)):
     if not await delete_gym(gym_id, user_id, db):
         raise HTTPException(status_code=404, detail="Gym not found")

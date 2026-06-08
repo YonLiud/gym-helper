@@ -37,13 +37,16 @@ async def _proxy(path: str, request: Request, extra_headers: dict = {}) -> Respo
     if upstream is None:
         raise HTTPException(status_code=404, detail="Not found")
 
+    # Strip the service-name prefix — each service handles its own routes without it
+    sub_path = path[len(service):]
+
     headers = {k: v for k, v in request.headers.items() if k.lower() not in _HOP_BY_HOP}
     headers.update(extra_headers)
 
     async with httpx.AsyncClient() as client:
         resp = await client.request(
             method=request.method,
-            url=f"{upstream}/{path}",
+            url=f"{upstream}{sub_path}",
             headers=headers,
             content=await request.body(),
             params=request.query_params,
