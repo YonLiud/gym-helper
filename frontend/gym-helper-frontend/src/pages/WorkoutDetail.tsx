@@ -19,14 +19,14 @@ function fmtDate(dateStr: string) {
 
 function SetRow({ set, onDelete }: { set: WorkoutSet; onDelete: () => void }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl bg-(--code-bg) px-4 py-2.5">
-      <span className="flex-1 text-sm text-(--text-h)">
+    <div className="flex items-center gap-3 rounded-[10px] bg-(--code-bg) px-4 py-2.5">
+      <span className="flex-1 text-[14px] text-(--text-h)">
         {set.weight != null ? `${set.weight} kg` : 'BW'}
-        {set.reps != null && <span className="text-(--text)"> × {set.reps}</span>}
+        {set.reps != null && <span className="text-(--text-muted)"> × {set.reps}</span>}
       </span>
       <button
         onClick={onDelete}
-        className="text-(--text) transition-colors hover:text-red-500"
+        className="text-(--text-disabled) transition-colors hover:text-red-500"
       >
         <Trash2 size={15} />
       </button>
@@ -51,7 +51,6 @@ export function WorkoutDetailPage() {
   const [adding, setAdding] = useState(false)
   const [addError, setAddError] = useState<string | null>(null)
 
-  // Set initial view once workout loads
   useEffect(() => {
     if (workout && view === null) {
       setView(workout.sets.length === 0 ? 'logger' : 'overview')
@@ -63,7 +62,6 @@ export function WorkoutDetailPage() {
     [exercises],
   )
 
-  // Previous performance: most recent OTHER workout with sets for this exercise
   const prevPerformance = useMemo(() => {
     if (!exerciseId || !workout) return null
     const match = [...workouts]
@@ -76,7 +74,6 @@ export function WorkoutDetailPage() {
     }
   }, [exerciseId, workout, workouts])
 
-  // Sets for the selected exercise in this workout
   const currentExerciseSets = useMemo(() => {
     if (!exerciseId || !workout) return []
     return workout.sets
@@ -84,7 +81,6 @@ export function WorkoutDetailPage() {
       .sort((a, b) => a.order - b.order)
   }, [exerciseId, workout])
 
-  // Exercises grouped in this workout (for overview)
   const exerciseGroups = useMemo(() => {
     if (!workout) return []
     const map = new Map<string, WorkoutSet[]>()
@@ -152,23 +148,21 @@ export function WorkoutDetailPage() {
 
     return (
       <div className="mx-auto max-w-lg space-y-5">
-        {/* Header */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => canGoToOverview ? setView('overview') : navigate({ to: '/workouts' })}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-(--border) text-(--text) transition-colors hover:border-(--accent-border) hover:text-(--accent)"
+            className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-[10px] bg-(--surface) border border-(--border) text-(--text-muted) transition-colors hover:text-(--text-h)"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={17} />
           </button>
           <div className="min-w-0">
-            <p className="truncate text-base font-semibold text-(--text-h)">{fmtDate(workout.date)}</p>
+            <p className="truncate text-[15px] font-medium text-(--text-h)">{fmtDate(workout.date)}</p>
             {workout.notes && (
-              <p className="truncate text-xs text-(--text)">{workout.notes}</p>
+              <p className="truncate text-[12px] text-(--text-muted)">{workout.notes}</p>
             )}
           </div>
         </div>
 
-        {/* Exercise picker */}
         <Select
           label="Exercise"
           value={exerciseId}
@@ -183,16 +177,15 @@ export function WorkoutDetailPage() {
 
         {selectedExercise && (
           <>
-            {/* Previous performance */}
             {prevPerformance ? (
-              <div className="rounded-2xl border border-(--border) p-4">
-                <p className="mb-2.5 text-xs font-medium text-(--text)">
+              <div className="rounded-[14px] border border-(--border) bg-(--surface) p-4">
+                <p className="mb-2.5 text-[11px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">
                   Last time · {fmtDate(prevPerformance.date)}
                 </p>
                 <div className="space-y-1.5">
                   {prevPerformance.sets.map((s, i) => (
-                    <p key={s.id} className="text-sm text-(--text-h)">
-                      <span className="text-(--text)">Set {i + 1} </span>
+                    <p key={s.id} className="text-[14px] text-(--text-h)">
+                      <span className="text-(--text-muted)">Set {i + 1} </span>
                       {s.weight != null ? `${s.weight} kg` : 'BW'}
                       {s.reps != null && ` × ${s.reps}`}
                     </p>
@@ -200,25 +193,23 @@ export function WorkoutDetailPage() {
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-(--text)">No previous data for {selectedExercise.name}.</p>
+              <p className="text-[13px] text-(--text-muted)">No previous data for {selectedExercise.name}.</p>
             )}
 
-            {/* Sets logged this session */}
             {currentExerciseSets.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-medium text-(--text)">This session</p>
+                <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">This session</p>
                 {currentExerciseSets.map(s => (
                   <SetRow key={s.id} set={s} onDelete={() => deleteSet(s.id)} />
                 ))}
               </div>
             )}
 
-            {/* Add set form */}
             {addError && <Alert variant="error">{addError}</Alert>}
             <form onSubmit={handleAddSet} className="space-y-3">
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className="mb-1.5 block text-sm font-medium text-(--text-h)">Weight (kg)</label>
+                  <label className="mb-1.5 block text-[13px] font-medium text-(--text-muted)">Weight (kg)</label>
                   <input
                     type="number"
                     inputMode="decimal"
@@ -227,11 +218,11 @@ export function WorkoutDetailPage() {
                     placeholder={currentExerciseSets.at(-1)?.weight?.toString() ?? 'e.g. 80'}
                     value={weight}
                     onChange={e => setWeight(e.target.value)}
-                    className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2 text-(--text-h) placeholder:text-(--text) focus:border-(--accent) focus:outline-none focus:ring-1 focus:ring-(--accent)"
+                    className="w-full rounded-lg border border-(--border) bg-(--surface) px-3 py-3 text-[15px] font-medium text-center text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors"
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="mb-1.5 block text-sm font-medium text-(--text-h)">Reps</label>
+                  <label className="mb-1.5 block text-[13px] font-medium text-(--text-muted)">Reps</label>
                   <input
                     type="number"
                     inputMode="numeric"
@@ -240,7 +231,7 @@ export function WorkoutDetailPage() {
                     placeholder={currentExerciseSets.at(-1)?.reps?.toString() ?? 'e.g. 8'}
                     value={reps}
                     onChange={e => setReps(e.target.value)}
-                    className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2 text-(--text-h) placeholder:text-(--text) focus:border-(--accent) focus:outline-none focus:ring-1 focus:ring-(--accent)"
+                    className="w-full rounded-lg border border-(--border) bg-(--surface) px-3 py-3 text-[15px] font-medium text-center text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -258,11 +249,10 @@ export function WorkoutDetailPage() {
           </>
         )}
 
-        {/* Done CTA */}
         {workout.sets.length > 0 && (
           <button
             onClick={() => setView('overview')}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-(--accent) py-3.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            className="flex w-full items-center justify-center gap-2 rounded-[14px] bg-(--accent) py-4.25 text-[15px] font-medium text-[#0f0f0f] transition-opacity hover:opacity-90"
           >
             Done — see workout
             <ChevronRight size={16} />
@@ -275,42 +265,40 @@ export function WorkoutDetailPage() {
   // ── Overview view ─────────────────────────────────────────────────────────────
   return (
     <div className="mx-auto max-w-lg space-y-5">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate({ to: '/workouts' })}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-(--border) text-(--text) transition-colors hover:border-(--accent-border) hover:text-(--accent)"
+          className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-[10px] bg-(--surface) border border-(--border) text-(--text-muted) transition-colors hover:text-(--text-h)"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft size={17} />
         </button>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-base font-semibold text-(--text-h)">{fmtDate(workout.date)}</p>
+          <p className="truncate text-[15px] font-medium text-(--text-h)">{fmtDate(workout.date)}</p>
           {workout.notes && (
-            <p className="truncate text-xs text-(--text)">{workout.notes}</p>
+            <p className="truncate text-[12px] text-(--text-muted)">{workout.notes}</p>
           )}
         </div>
       </div>
 
-      {/* Exercise groups */}
       {exerciseGroups.length === 0 ? (
-        <p className="text-sm text-(--text)">No sets logged yet.</p>
+        <p className="text-[13px] text-(--text-muted)">No sets logged yet.</p>
       ) : (
         <div className="space-y-3">
           {exerciseGroups.map(({ exId, name, sets }) => (
-            <div key={exId} className="rounded-2xl border border-(--border) p-4">
+            <div key={exId} className="rounded-[14px] border border-(--border) bg-(--surface) p-4">
               <div className="mb-3 flex items-center justify-between">
-                <p className="font-medium text-(--text-h)">{name}</p>
+                <p className="text-[14px] font-medium text-(--text-h)">{name}</p>
                 <button
                   onClick={() => openLoggerForExercise(exId)}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg text-(--text) transition-colors hover:bg-(--code-bg) hover:text-(--accent)"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg text-(--text-muted) transition-colors hover:bg-(--code-bg) hover:text-(--accent)"
                 >
                   <Plus size={16} />
                 </button>
               </div>
               <div className="space-y-1.5">
                 {sets.map((s, i) => (
-                  <div key={s.id} className="flex items-center justify-between text-sm">
-                    <span className="text-(--text)">Set {i + 1}</span>
+                  <div key={s.id} className="flex items-center justify-between text-[13px]">
+                    <span className="text-(--text-muted)">Set {i + 1}</span>
                     <span className="text-(--text-h)">
                       {s.weight != null ? `${s.weight} kg` : 'BW'}
                       {s.reps != null && ` × ${s.reps}`}
@@ -323,10 +311,9 @@ export function WorkoutDetailPage() {
         </div>
       )}
 
-      {/* Add exercise */}
       <button
         onClick={() => openLoggerForExercise()}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-(--border) py-3.5 text-sm font-medium text-(--text) transition-colors hover:border-(--accent-border) hover:text-(--accent)"
+        className="flex w-full items-center justify-center gap-2 rounded-[14px] border border-(--border) py-4.25 text-[14px] font-medium text-(--text-muted) transition-colors hover:border-(--accent-border) hover:text-(--accent)"
       >
         <Plus size={16} />
         Add Exercise

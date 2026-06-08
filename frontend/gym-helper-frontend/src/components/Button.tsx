@@ -12,19 +12,19 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-(--accent) text-white border-transparent hover:opacity-90',
+    'bg-(--accent) text-[#0f0f0f] border-transparent hover:opacity-90',
   secondary:
-    'bg-transparent border-(--border) text-(--text-h) hover:border-(--accent) hover:text-(--accent)',
+    'bg-(--surface) border-(--border) text-(--text-muted) hover:text-(--text-h)',
   ghost:
-    'bg-transparent border-transparent text-(--text) hover:text-(--text-h) hover:bg-(--code-bg)',
+    'bg-transparent border-transparent text-(--text-muted) hover:text-(--text-h) hover:bg-(--surface)',
   danger:
     'bg-red-500 text-white border-transparent hover:bg-red-600',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: 'text-sm px-3 py-1.5 rounded-md',
-  md: 'px-4 py-2 rounded-lg',
-  lg: 'text-lg px-6 py-3 rounded-lg',
+  sm: 'text-[13px] px-3 py-2 rounded-[10px]',
+  md: 'text-[14px] px-4 py-3 rounded-[12px]',
+  lg: 'text-[15px] px-4 py-[17px] rounded-[14px]',
 }
 
 export function Button({

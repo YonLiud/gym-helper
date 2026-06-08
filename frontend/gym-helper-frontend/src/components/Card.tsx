@@ -10,9 +10,8 @@ export function Card({ children, className, onClick }: CardProps) {
   return (
     <div
       className={cn(
-        'rounded-xl border border-(--border) bg-(--bg) p-4',
-        onClick &&
-          'cursor-pointer hover:border-(--accent) hover:shadow-(--shadow) transition-all',
+        'rounded-[14px] border border-(--border) bg-(--surface) px-4 py-3.5',
+        onClick && 'cursor-pointer transition-colors hover:border-(--accent-border)',
         className,
       )}
       onClick={onClick}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
+import { Alert, Button, Input } from '../components'
 import { useAuth } from '../hooks/useAuth'
 
 export function LoginPage() {
@@ -25,33 +26,31 @@ export function LoginPage() {
   }
 
   return (
-    <div>
-      <h1>Log in</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username</label>
-          <input
+    <div className="flex min-h-svh flex-col items-center justify-center px-5">
+      <div className="w-full max-w-sm space-y-6">
+        <h1>Log in</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            label="Username"
             type="text"
             value={username}
             onChange={e => setUsername(e.target.value)}
             required
             autoFocus
           />
-        </div>
-        <div>
-          <label>Password</label>
-          <input
+          <Input
+            label="Password"
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
           />
-        </div>
-        {error && <p>{error}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Log in'}
-        </button>
-      </form>
+          {error && <Alert variant="error">{error}</Alert>}
+          <Button type="submit" size="lg" className="w-full" loading={loading}>
+            Log in
+          </Button>
+        </form>
+      </div>
     </div>
   )
 }

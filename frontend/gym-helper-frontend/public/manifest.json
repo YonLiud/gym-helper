@@ -1,0 +1,10 @@
+{
+  "name": "Gym Helper",
+  "short_name": "Gym Helper",
+  "description": "Personal gym performance tracker",
+  "start_url": "/workouts",
+  "display": "standalone",
+  "background_color": "#1c1c1c",
+  "theme_color": "#1c1c1c",
+  "icons": []
+}

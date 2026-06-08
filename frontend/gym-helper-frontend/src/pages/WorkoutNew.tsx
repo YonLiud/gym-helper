@@ -60,16 +60,16 @@ export function WorkoutNewPage() {
       <div className="mb-6 flex items-center gap-3">
         <button
           onClick={() => navigate({ to: '/workouts' })}
-          className="flex h-9 w-9 items-center justify-center rounded-xl border border-(--border) text-(--text) transition-colors hover:border-(--accent-border) hover:text-(--accent)"
+          className="flex h-8.5 w-8.5 items-center justify-center rounded-[10px] bg-(--surface) border border-(--border) text-(--text-muted) transition-colors hover:text-(--text-h)"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft size={17} />
         </button>
-        <h2 style={{ margin: 0 }}>New Workout</h2>
+        <h2>New Workout</h2>
       </div>
 
       {error && <Alert variant="error" className="mb-4">{error}</Alert>}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           label="Title"
           value={title}

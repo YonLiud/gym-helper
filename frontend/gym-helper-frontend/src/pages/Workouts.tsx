@@ -47,37 +47,37 @@ function WorkoutCard({
     <Link
       to="/workouts/$id"
       params={{ id: workout.id }}
-      className="flex items-center gap-4 rounded-2xl border border-(--border) bg-(--bg) px-4 py-3.5 transition-colors hover:border-(--accent-border) hover:bg-(--accent-bg) active:scale-[0.99]"
+      className="flex items-center gap-4 rounded-[14px] border border-(--border) bg-(--surface) px-4 py-3.5 transition-colors hover:border-(--accent-border) active:scale-[0.99]"
     >
-      <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-(--code-bg) py-2.5 text-center">
-        <span className="text-base font-semibold leading-tight text-(--text-h)">{main}</span>
-        {sub && <span className="mt-0.5 text-xs text-(--text)">{sub}</span>}
+      <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-[10px] bg-(--code-bg) py-2.5 text-center">
+        <span className="text-[15px] font-medium leading-tight text-(--text-h)">{main}</span>
+        {sub && <span className="mt-0.5 text-[11px] text-(--text-muted)">{sub}</span>}
       </div>
 
       <div className="min-w-0 flex-1">
         {workout.notes && (
-          <p className="mb-1 truncate text-sm font-medium text-(--text-h)">{workout.notes}</p>
+          <p className="mb-1 truncate text-[14px] font-medium text-(--text-h)">{workout.notes}</p>
         )}
 
         {gymName && (
-          <div className="mb-1.5 flex items-center gap-1 text-xs text-(--text)">
+          <div className="mb-1.5 flex items-center gap-1 text-[11px] text-(--text-muted)">
             <MapPin size={11} className="shrink-0" />
             <span className="truncate">{gymName}</span>
           </div>
         )}
 
         {preview.length > 0 ? (
-          <p className="truncate text-xs text-(--text)">{preview.join(' · ')}</p>
+          <p className="truncate text-[12px] text-(--text-muted)">{preview.join(' · ')}</p>
         ) : (
-          <p className="text-xs text-(--text)">No exercises logged</p>
+          <p className="text-[12px] text-(--text-muted)">No exercises logged</p>
         )}
 
-        <p className="mt-1 text-xs text-(--accent)">
+        <p className="mt-1 text-[11px] text-(--accent)">
           {setCount} {setCount === 1 ? 'set' : 'sets'}
         </p>
       </div>
 
-      <ChevronRight size={16} className="shrink-0 text-(--border)" />
+      <ChevronRight size={16} className="shrink-0 text-(--text-disabled)" />
     </Link>
   )
 }
@@ -125,7 +125,7 @@ export function WorkoutsPage() {
           description="Tap the + button to log your first session."
         />
       ) : (
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {sorted.map(w => {
             const uniqueExerciseIds = [...new Set(w.sets.map(s => s.exercise_id))]
             const exerciseNames = uniqueExerciseIds

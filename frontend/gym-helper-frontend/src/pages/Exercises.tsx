@@ -50,8 +50,8 @@ function AddExerciseForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-(--border) p-4">
-      <p className="text-sm font-medium text-(--text-h)">Add exercise</p>
+    <form onSubmit={handleSubmit} className="space-y-3 rounded-[14px] border border-(--border) bg-(--surface) p-4">
+      <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">Add exercise</p>
       {error && <Alert variant="error">{error}</Alert>}
       <input
         type="text"
@@ -59,7 +59,7 @@ function AddExerciseForm({
         value={name}
         onChange={e => setName(e.target.value)}
         required
-        className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2 text-(--text-h) placeholder:text-(--text) focus:border-(--accent) focus:outline-none focus:ring-1 focus:ring-(--accent)"
+        className="w-full rounded-[10px] border border-(--border) bg-(--code-bg) px-4 py-3 text-[14px] text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors"
       />
       <div className="flex gap-3">
         <Select
@@ -121,7 +121,6 @@ export function ExercisesPage() {
     })
   }
 
-  // Group exercises by muscle_group, ungrouped at the end
   const groups = useMemo(() => {
     const map = new Map<string, typeof exercises>()
     for (const ex of exercises) {
@@ -130,7 +129,6 @@ export function ExercisesPage() {
       arr.push(ex)
       map.set(key, arr)
     }
-    // Sort groups by known order, then alphabetically
     const known = [...MUSCLE_GROUPS, 'other']
     return [...map.entries()].sort(([a], [b]) => {
       const ai = known.indexOf(a)
@@ -155,12 +153,12 @@ export function ExercisesPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 style={{ margin: 0 }}>Exercises</h2>
+        <h2>Exercises</h2>
         <button
           onClick={() => setShowForm(v => !v)}
-          className="flex h-9 w-9 items-center justify-center rounded-xl border border-(--border) text-(--text) transition-colors hover:border-(--accent-border) hover:text-(--accent)"
+          className="flex h-8.5 w-8.5 items-center justify-center rounded-[10px] bg-(--surface) border border-(--border) text-(--text-muted) transition-colors hover:text-(--text-h)"
         >
-          <Plus size={18} className={showForm ? 'rotate-45 transition-transform' : 'transition-transform'} />
+          <Plus size={17} className={showForm ? 'rotate-45 transition-transform' : 'transition-transform'} />
         </button>
       </div>
 
@@ -180,7 +178,7 @@ export function ExercisesPage() {
 
       {exercises.length === 0 ? (
         <div className="flex flex-col items-center gap-4 py-16 text-center">
-          <p className="text-(--text)">No exercises yet.</p>
+          <p className="text-[13px] text-(--text-muted)">No exercises yet.</p>
           <Button variant="secondary" onClick={handleSeedDefaults} loading={seeding}>
             <Sparkles size={16} />
             Load defaults
@@ -188,17 +186,17 @@ export function ExercisesPage() {
         </div>
       ) : (
         <>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {groups.map(([group, exs]) => {
               const collapsed = collapsedGroups.has(group)
               return (
-                <div key={group} className="rounded-2xl border border-(--border) overflow-hidden">
+                <div key={group} className="rounded-[14px] border border-(--border) bg-(--surface) overflow-hidden">
                   <button
                     onClick={() => toggleGroup(group)}
                     className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-(--code-bg)"
                   >
-                    <span className="text-sm font-semibold text-(--text-h)">{capitalize(group)}</span>
-                    <span className="flex items-center gap-2 text-xs text-(--text)">
+                    <span className="text-[13px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">{capitalize(group)}</span>
+                    <span className="flex items-center gap-2 text-[12px] text-(--text-muted)">
                       {exs.length}
                       {collapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
                     </span>
@@ -209,14 +207,14 @@ export function ExercisesPage() {
                       {exs.map(ex => (
                         <div key={ex.id} className="flex items-center gap-3 px-4 py-2.5">
                           <div className="flex-1 min-w-0">
-                            <p className="truncate text-sm text-(--text-h)">{ex.name}</p>
+                            <p className="truncate text-[14px] text-(--text-h)">{ex.name}</p>
                             {ex.equipment_type && (
-                              <p className="text-xs text-(--text)">{capitalize(ex.equipment_type)}</p>
+                              <p className="text-[12px] text-(--text-muted)">{capitalize(ex.equipment_type)}</p>
                             )}
                           </div>
                           <button
                             onClick={() => handleDelete(ex.id)}
-                            className="shrink-0 text-(--border) transition-colors hover:text-red-500"
+                            className="shrink-0 text-(--text-disabled) transition-colors hover:text-red-500"
                           >
                             <Trash2 size={15} />
                           </button>

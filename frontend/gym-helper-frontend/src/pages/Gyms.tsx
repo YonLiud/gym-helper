@@ -4,6 +4,8 @@ import { Alert, Button, Spinner } from '../components'
 import { useGyms } from '../hooks/useGyms'
 import type { Gym, GymInput } from '../types'
 
+const inputClass = 'w-full rounded-[10px] border border-(--border) bg-(--code-bg) px-4 py-3 text-[14px] text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors'
+
 function AddGymForm({ onAdd }: { onAdd: (input: GymInput) => Promise<void> }) {
   const [name, setName] = useState('')
   const [location, setLocation] = useState('')
@@ -28,32 +30,12 @@ function AddGymForm({ onAdd }: { onAdd: (input: GymInput) => Promise<void> }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-(--border) p-4">
-      <p className="text-sm font-medium text-(--text-h)">Add gym</p>
+    <form onSubmit={handleSubmit} className="space-y-3 rounded-[14px] border border-(--border) bg-(--surface) p-4">
+      <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">Add gym</p>
       {error && <Alert variant="error">{error}</Alert>}
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={e => setName(e.target.value)}
-        required
-        className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2 text-(--text-h) placeholder:text-(--text) focus:border-(--accent) focus:outline-none focus:ring-1 focus:ring-(--accent)"
-      />
-      <input
-        type="text"
-        placeholder="Location"
-        value={location}
-        onChange={e => setLocation(e.target.value)}
-        required
-        className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2 text-(--text-h) placeholder:text-(--text) focus:border-(--accent) focus:outline-none focus:ring-1 focus:ring-(--accent)"
-      />
-      <input
-        type="text"
-        placeholder="Notes (optional)"
-        value={notes}
-        onChange={e => setNotes(e.target.value)}
-        className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2 text-(--text-h) placeholder:text-(--text) focus:border-(--accent) focus:outline-none focus:ring-1 focus:ring-(--accent)"
-      />
+      <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required className={inputClass} />
+      <input type="text" placeholder="Location" value={location} onChange={e => setLocation(e.target.value)} required className={inputClass} />
+      <input type="text" placeholder="Notes (optional)" value={notes} onChange={e => setNotes(e.target.value)} className={inputClass} />
       <Button type="submit" variant="secondary" className="w-full" loading={submitting} disabled={!name.trim() || !location.trim()}>
         <Plus size={16} />
         Add
@@ -102,30 +84,11 @@ function GymCard({
 
   if (editing) {
     return (
-      <form onSubmit={handleSave} className="space-y-2.5 rounded-2xl border border-(--accent-border) bg-(--accent-bg) p-4">
+      <form onSubmit={handleSave} className="space-y-2.5 rounded-[14px] border border-(--accent-border) bg-(--surface) p-4">
         {error && <Alert variant="error">{error}</Alert>}
-        <input
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          required
-          autoFocus
-          className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2 text-(--text-h) placeholder:text-(--text) focus:border-(--accent) focus:outline-none focus:ring-1 focus:ring-(--accent)"
-        />
-        <input
-          type="text"
-          value={location}
-          onChange={e => setLocation(e.target.value)}
-          required
-          className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2 text-(--text-h) placeholder:text-(--text) focus:border-(--accent) focus:outline-none focus:ring-1 focus:ring-(--accent)"
-        />
-        <input
-          type="text"
-          placeholder="Notes (optional)"
-          value={notes}
-          onChange={e => setNotes(e.target.value)}
-          className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2 text-(--text-h) placeholder:text-(--text) focus:border-(--accent) focus:outline-none focus:ring-1 focus:ring-(--accent)"
-        />
+        <input type="text" value={name} onChange={e => setName(e.target.value)} required autoFocus className={inputClass} />
+        <input type="text" value={location} onChange={e => setLocation(e.target.value)} required className={inputClass} />
+        <input type="text" placeholder="Notes (optional)" value={notes} onChange={e => setNotes(e.target.value)} className={inputClass} />
         <div className="flex gap-2">
           <Button type="submit" size="sm" className="flex-1" loading={saving} disabled={!name.trim() || !location.trim()}>
             Save
@@ -139,23 +102,23 @@ function GymCard({
   }
 
   return (
-    <div className="flex items-start gap-3 rounded-2xl border border-(--border) p-4">
-      <MapPin size={16} className="mt-0.5 shrink-0 text-(--accent)" />
+    <div className="flex items-start gap-3 rounded-[14px] border border-(--border) bg-(--surface) p-4">
+      <MapPin size={15} className="mt-0.5 shrink-0 text-(--accent)" />
       <div className="min-w-0 flex-1">
-        <p className="font-medium text-(--text-h)">{gym.name}</p>
-        <p className="text-sm text-(--text)">{gym.location}</p>
-        {gym.notes && <p className="mt-1 text-xs text-(--text)">{gym.notes}</p>}
+        <p className="text-[14px] font-medium text-(--text-h)">{gym.name}</p>
+        <p className="text-[13px] text-(--text-muted)">{gym.location}</p>
+        {gym.notes && <p className="mt-1 text-[12px] text-(--text-muted)">{gym.notes}</p>}
       </div>
       <div className="flex shrink-0 gap-1">
         <button
           onClick={startEdit}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-(--text) transition-colors hover:bg-(--code-bg) hover:text-(--text-h)"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-(--text-muted) transition-colors hover:bg-(--code-bg) hover:text-(--text-h)"
         >
           <Pencil size={14} />
         </button>
         <button
           onClick={onDelete}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-(--text) transition-colors hover:bg-(--code-bg) hover:text-red-500"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-(--text-muted) transition-colors hover:bg-(--code-bg) hover:text-red-500"
         >
           <Trash2 size={14} />
         </button>
@@ -190,12 +153,12 @@ export function GymsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 style={{ margin: 0 }}>Gyms</h2>
+        <h2>Gyms</h2>
         <button
           onClick={() => setShowForm(v => !v)}
-          className="flex h-9 w-9 items-center justify-center rounded-xl border border-(--border) text-(--text) transition-colors hover:border-(--accent-border) hover:text-(--accent)"
+          className="flex h-8.5 w-8.5 items-center justify-center rounded-[10px] bg-(--surface) border border-(--border) text-(--text-muted) transition-colors hover:text-(--text-h)"
         >
-          <Plus size={18} className={showForm ? 'rotate-45 transition-transform' : 'transition-transform'} />
+          <Plus size={17} className={showForm ? 'rotate-45 transition-transform' : 'transition-transform'} />
         </button>
       </div>
 
@@ -213,9 +176,9 @@ export function GymsPage() {
       )}
 
       {gyms.length === 0 ? (
-        <p className="py-16 text-center text-sm text-(--text)">No gyms yet. Add one above.</p>
+        <p className="py-16 text-center text-[13px] text-(--text-muted)">No gyms yet. Add one above.</p>
       ) : (
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {gyms.map(gym => (
             <GymCard
               key={gym.id}
