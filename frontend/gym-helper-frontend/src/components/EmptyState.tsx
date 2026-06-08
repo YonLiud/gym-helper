@@ -7,7 +7,7 @@ interface EmptyStateProps {
 export function EmptyState({ title, description, action }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-      <div className="rounded-full bg-[var(--code-bg)] p-4">
+      <div className="rounded-full bg-(--code-bg) p-4">
         <svg
           width="24"
           height="24"
@@ -17,7 +17,7 @@ export function EmptyState({ title, description, action }: EmptyStateProps) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-[var(--text)]"
+          className="text-(--text)"
         >
           <path d="M6.5 6.5h11" />
           <path d="M6.5 17.5h11" />
@@ -27,9 +27,9 @@ export function EmptyState({ title, description, action }: EmptyStateProps) {
           <path d="M18.5 6.5v11" />
         </svg>
       </div>
-      <p className="text-lg font-medium text-[var(--text-h)]">{title}</p>
+      <p className="text-lg font-medium text-(--text-h)">{title}</p>
       {description && (
-        <p className="text-sm text-[var(--text)] max-w-xs">{description}</p>
+        <p className="text-sm text-(--text) max-w-xs">{description}</p>
       )}
       {action && <div className="mt-2">{action}</div>}
     </div>

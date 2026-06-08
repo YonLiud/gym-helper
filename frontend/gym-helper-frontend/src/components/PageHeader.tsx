@@ -10,7 +10,7 @@ export function PageHeader({ title, description, action }: PageHeaderProps) {
       <div>
         <h2 style={{ margin: 0 }}>{title}</h2>
         {description && (
-          <p className="mt-1 text-sm text-[var(--text)]">{description}</p>
+          <p className="mt-1 text-sm text-(--text)">{description}</p>
         )}
       </div>
       {action && <div className="shrink-0">{action}</div>}

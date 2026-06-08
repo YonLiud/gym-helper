@@ -10,14 +10,14 @@ export function Input({ label, error, id, className, ...props }: InputProps) {
   return (
     <div className="flex flex-col gap-1.5 text-left">
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-[var(--text-h)]">
+        <label htmlFor={inputId} className="text-sm font-medium text-(--text-h)">
           {label}
         </label>
       )}
       <input
         id={inputId}
         className={cn(
-          'w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2 text-[var(--text-h)] placeholder:text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-colors',
+          'w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2 text-(--text-h) placeholder:text-(--text) focus:outline-none focus:border-(--accent) focus:ring-1 focus:ring-(--accent) transition-colors',
           error && 'border-red-500 focus:border-red-500 focus:ring-red-500',
           className,
         )}

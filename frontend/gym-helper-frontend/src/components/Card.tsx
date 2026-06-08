@@ -10,9 +10,9 @@ export function Card({ children, className, onClick }: CardProps) {
   return (
     <div
       className={cn(
-        'rounded-xl border border-[var(--border)] bg-[var(--bg)] p-4',
+        'rounded-xl border border-(--border) bg-(--bg) p-4',
         onClick &&
-          'cursor-pointer hover:border-[var(--accent)] hover:shadow-[var(--shadow)] transition-all',
+          'cursor-pointer hover:border-(--accent) hover:shadow-(--shadow) transition-all',
         className,
       )}
       onClick={onClick}

@@ -99,12 +99,12 @@ export function ComponentsPreviewPage() {
 
       <Section title="Card">
         <Card>
-          <p className="text-[var(--text-h)] font-medium">Basic card</p>
-          <p className="text-sm text-[var(--text)]">Plain container with border.</p>
+          <p className="text-(--text-h) font-medium">Basic card</p>
+          <p className="text-sm text-(--text)">Plain container with border.</p>
         </Card>
         <Card onClick={() => alert('clicked!')}>
-          <p className="text-[var(--text-h)] font-medium">Clickable card</p>
-          <p className="text-sm text-[var(--text)]">Hover to see accent border.</p>
+          <p className="text-(--text-h) font-medium">Clickable card</p>
+          <p className="text-sm text-(--text)">Hover to see accent border.</p>
         </Card>
       </Section>
 

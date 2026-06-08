@@ -9,9 +9,9 @@ interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  default: 'bg-[var(--code-bg)] text-[var(--text)]',
+  default: 'bg-(--code-bg) text-(--text)',
   accent:
-    'bg-[var(--accent-bg)] text-[var(--accent)] border border-[var(--accent-border)]',
+    'bg-(--accent-bg) text-(--accent) border border-(--accent-border)',
   success:
     'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
   warning:
