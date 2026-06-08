@@ -2,6 +2,7 @@ import os
 
 import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from jose import JWTError, jwt
 
@@ -17,7 +18,22 @@ UPSTREAM = {
 
 _HOP_BY_HOP = {"host", "content-length", "transfer-encoding", "connection"}
 
+_ORIGINS = [
+    "http://localhost:5173",
+    "http://192.168.1.119:5173",
+]
+if _domain := os.environ.get("FRONTEND_DOMAIN"):
+    _ORIGINS.append(_domain)
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def get_current_user(request: Request) -> dict:

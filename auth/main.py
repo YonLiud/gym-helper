@@ -44,7 +44,7 @@ def _set_auth_cookie(response: Response, token: str):
         key="token",
         value=token,
         httponly=True,
-        samesite="strict",
+        samesite="lax",
         secure=SECURE_COOKIE,
         max_age=COOKIE_MAX_AGE,
     )
