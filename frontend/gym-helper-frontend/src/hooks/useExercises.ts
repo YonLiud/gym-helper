@@ -26,9 +26,25 @@ export function useExercises(muscleGroup?: string) {
 
   async function createExercise(input: ExerciseInput): Promise<Exercise> {
     const exercise = await api.post<Exercise>('/exercise', input)
-    setExercises(prev => [...prev, exercise])
+    setExercises(prev => [...prev, exercise].sort((a, b) => a.name.localeCompare(b.name)))
     return exercise
   }
 
-  return { exercises, loading, error, createExercise, reload: load }
+  async function deleteExercise(id: string): Promise<void> {
+    const snapshot = exercises
+    setExercises(prev => prev.filter(e => e.id !== id))
+    try {
+      await api.delete(`/exercise/${id}`)
+    } catch (err) {
+      setExercises(snapshot)
+      throw err
+    }
+  }
+
+  async function seedDefaults(): Promise<void> {
+    const exercises = await api.post<Exercise[]>('/exercise/defaults', {})
+    setExercises(exercises)
+  }
+
+  return { exercises, loading, error, createExercise, deleteExercise, seedDefaults, reload: load }
 }

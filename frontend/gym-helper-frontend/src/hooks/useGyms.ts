@@ -34,8 +34,14 @@ export function useGyms() {
   }
 
   async function deleteGym(id: string): Promise<void> {
-    await api.delete(`/gym/${id}`)
+    const snapshot = gyms
     setGyms(prev => prev.filter(g => g.id !== id))
+    try {
+      await api.delete(`/gym/${id}`)
+    } catch (err) {
+      setGyms(snapshot)
+      throw err
+    }
   }
 
   return { gyms, loading, error, createGym, updateGym, deleteGym, reload: load }
