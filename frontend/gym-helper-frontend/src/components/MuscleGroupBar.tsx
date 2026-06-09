@@ -31,7 +31,6 @@ interface MuscleGroupBarProps {
 export function MuscleGroupBar({ groups }: MuscleGroupBarProps) {
   if (groups.length === 0) return null
 
-  // Cap at 6 slices, merge the rest into "Other"
   const top = groups.slice(0, 6)
   const rest = groups.slice(6)
   const sliceData: MuscleGroupStat[] = rest.length > 0
@@ -56,9 +55,15 @@ export function MuscleGroupBar({ groups }: MuscleGroupBarProps) {
       <p className="mb-3 text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
         Muscle focus
       </p>
-      <div className="flex items-center gap-5">
 
-        <svg viewBox="0 0 120 120" width={110} height={110} className="shrink-0">
+      {/* Mobile: chart left, legend right — Desktop: chart centered on top, legend grid below */}
+      <div className="flex items-center gap-5 md:flex-col md:gap-4">
+
+        <svg
+          viewBox="0 0 120 120"
+          className="w-28 shrink-0 md:w-36"
+          style={{ height: 'auto' }}
+        >
           {slices.map((s, i) => (
             <path
               key={i}
@@ -76,7 +81,7 @@ export function MuscleGroupBar({ groups }: MuscleGroupBarProps) {
           </text>
         </svg>
 
-        <div className="min-w-0 flex-1 space-y-2">
+        <div className="min-w-0 flex-1 space-y-2 md:w-full md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-2 md:space-y-0">
           {slices.map((s, i) => {
             const pct = Math.round((s.count / total) * 100)
             const due = s.daysSinceLastTrained > 7 && s.name !== 'Other'
