@@ -83,7 +83,7 @@ export function HomePage() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <StatCard
               label="This week"
               value={thisWeek}
@@ -106,9 +106,10 @@ export function HomePage() {
             />
           </div>
 
-          <MuscleGroupBar groups={muscleGroups} />
-
-          <RecentPRs prs={prs} />
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <MuscleGroupBar groups={muscleGroups} />
+            <RecentPRs prs={prs} />
+          </div>
         </>
       )}
     </div>
