@@ -58,7 +58,7 @@ export function AppLayout() {
   return (
     <div className="flex min-h-svh flex-col text-left">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-(--border) bg-(--bg) px-5 py-3.5">
-        <span className="text-[18px] font-medium text-(--text-h)">Gym Helper</span>
+        <Link to="/home" className="text-[18px] font-medium text-(--text-h)">Gym Helper</Link>
 
         <div ref={menuRef} className="relative">
           <button

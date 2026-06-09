@@ -1,13 +1,13 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ExerciseCreate(BaseModel):
-    name: str
-    muscle_group: str | None = None
-    equipment_type: str | None = None
+    name: str = Field(min_length=1, max_length=100)
+    muscle_group: str | None = Field(default=None, max_length=50)
+    equipment_type: str | None = Field(default=None, max_length=50)
 
 
 class ExerciseResponse(BaseModel):

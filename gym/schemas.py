@@ -1,19 +1,19 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class GymCreate(BaseModel):
-    name: str
-    location: str
-    notes: str | None = None
+    name: str = Field(min_length=1, max_length=100)
+    location: str = Field(min_length=1, max_length=200)
+    notes: str | None = Field(default=None, max_length=500)
 
 
 class GymUpdate(BaseModel):
-    name: str | None = None
-    location: str | None = None
-    notes: str | None = None
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    location: str | None = Field(default=None, min_length=1, max_length=200)
+    notes: str | None = Field(default=None, max_length=500)
 
 
 class GymResponse(BaseModel):

@@ -10,10 +10,11 @@ async function request<T>(method: string, path: string, body?: unknown, signal?:
   })
 
   if (res.status === 401) {
+    const err = await res.json().catch(() => ({ detail: 'Unauthorized' }))
     if (window.location.pathname !== '/login') {
       window.location.href = '/login'
     }
-    throw new Error('Unauthorized')
+    throw new Error(err.detail ?? 'Unauthorized')
   }
 
   if (!res.ok) {
