@@ -27,6 +27,7 @@ export interface SetInput {
 }
 
 export interface SetUpdateInput {
+  exercise_id?: string
   order?: number
   weight?: number | null
   reps?: number | null

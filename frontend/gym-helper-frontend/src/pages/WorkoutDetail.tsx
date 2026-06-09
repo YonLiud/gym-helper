@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { ArrowLeft, Plus, Search, Trash2, X } from 'lucide-react'
+import { ArrowLeft, Pencil, Plus, Search, Trash2, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Alert, Button, Skeleton } from '../components'
 import { cn } from '../lib/cn'
@@ -204,11 +204,11 @@ function InlineTitle({
   }
 
   return (
-    <button onClick={startEdit} className="w-full truncate text-left text-[16px] font-medium transition-colors hover:text-(--text-muted)">
-      {value
-        ? <span className="text-(--text-h)">{value}</span>
-        : <span className="text-(--text-disabled)">Add title…</span>
-      }
+    <button onClick={startEdit} className="flex w-full items-center gap-1.5 truncate text-left transition-colors">
+      <span className="truncate text-[16px] font-medium text-(--text-h)">
+        {value || <span className="text-(--text-disabled)">Add title…</span>}
+      </span>
+      <Pencil size={12} className="shrink-0 text-(--text-disabled)" />
     </button>
   )
 }
@@ -221,7 +221,7 @@ export function WorkoutDetailPage() {
   const { id } = useParams({ from: '/workouts/$id' })
   const navigate = useNavigate()
 
-  const { workout, loading, error, addSet, updateWorkout, deleteWorkout, deleteSet } = useWorkout(id)
+  const { workout, loading, error, addSet, updateSet, updateWorkout, deleteWorkout, deleteSet } = useWorkout(id)
   const { exercises } = useExercises()
   const { workouts } = useWorkouts()
 
@@ -234,6 +234,7 @@ export function WorkoutDetailPage() {
 
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [reassigningGroup, setReassigningGroup] = useState<string | null>(null)
 
   useEffect(() => {
     if (workout && view === null) {
@@ -516,27 +517,55 @@ export function WorkoutDetailPage() {
       ) : (
         <div className="space-y-3">
           {exerciseGroups.map(({ exId, name, sets }) => (
-            <div key={exId} className="rounded-[14px] border border-(--border) bg-(--surface) p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <p className="text-[14px] font-medium text-(--text-h)">{name}</p>
-                <button
-                  onClick={() => openLoggerForExercise(exId)}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg text-(--text-muted) transition-colors hover:bg-(--code-bg) hover:text-(--accent)"
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
-              <div className="space-y-1.5">
-                {sets.map((s, i) => (
-                  <div key={s.id} className="flex items-center justify-between text-[13px]">
-                    <span className="text-(--text-muted)">Set {i + 1}</span>
-                    <span className="text-(--text-h)">
-                      {s.weight != null ? `${s.weight} kg` : 'BW'}
-                      {s.reps != null && ` × ${s.reps}`}
-                    </span>
+            <div key={exId} className="rounded-[14px] border border-(--border) bg-(--surface) overflow-hidden">
+              {reassigningGroup === exId ? (
+                <div className="space-y-3 p-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">Change exercise</p>
+                    <button onClick={() => setReassigningGroup(null)} className="text-(--text-muted) hover:text-(--text-h) transition-colors">
+                      <X size={14} />
+                    </button>
                   </div>
-                ))}
-              </div>
+                  <ExercisePicker
+                    exercises={exercises}
+                    selectedId=""
+                    onSelect={async newId => {
+                      if (!newId) return
+                      setReassigningGroup(null)
+                      await Promise.all(sets.map(s => updateSet(s.id, { exercise_id: newId })))
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="p-4">
+                  <div className="mb-3 flex items-center justify-between">
+                    <button
+                      onClick={() => setReassigningGroup(exId)}
+                      className="flex items-center gap-1.5 text-left transition-colors hover:text-(--text-muted)"
+                    >
+                      <span className="text-[14px] font-medium text-(--text-h)">{name}</span>
+                      <Pencil size={11} className="shrink-0 text-(--text-disabled)" />
+                    </button>
+                    <button
+                      onClick={() => openLoggerForExercise(exId)}
+                      className="flex h-7 w-7 items-center justify-center rounded-lg text-(--text-muted) transition-colors hover:bg-(--code-bg) hover:text-(--accent)"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                  <div className="space-y-1.5">
+                    {sets.map((s, i) => (
+                      <div key={s.id} className="flex items-center justify-between text-[13px]">
+                        <span className="text-(--text-muted)">Set {i + 1}</span>
+                        <span className="text-(--text-h)">
+                          {s.weight != null ? `${s.weight} kg` : 'BW'}
+                          {s.reps != null && ` × ${s.reps}`}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
