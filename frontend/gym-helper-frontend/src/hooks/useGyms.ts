@@ -1,53 +1,38 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
 import type { Gym, GymInput } from '../types'
 
 export function useGyms() {
-  const [gyms, setGyms] = useState<Gym[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
-  const load = useCallback(async (signal?: AbortSignal) => {
-    try {
-      setError(null)
-      const data = await api.get<Gym[]>('/gym', signal)
-      setGyms(data)
-    } catch (e) {
-      if (e instanceof Error && e.name === 'AbortError') return
-      setError(e instanceof Error ? e.message : 'Failed to load gyms')
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const query = useQuery({
+    queryKey: ['gyms'],
+    queryFn: () => api.get<Gym[]>('/gym'),
+    staleTime: 5 * 60 * 1000,
+  })
 
-  useEffect(() => {
-    const controller = new AbortController()
-    load(controller.signal)
-    return () => controller.abort()
-  }, [load])
+  const createMutation = useMutation({
+    mutationFn: (input: GymInput) => api.post<Gym>('/gym', input),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['gyms'] }),
+  })
 
-  async function createGym(input: GymInput): Promise<Gym> {
-    const gym = await api.post<Gym>('/gym', input)
-    setGyms(prev => [...prev, gym])
-    return gym
+  const updateMutation = useMutation({
+    mutationFn: ({ id, input }: { id: string; input: Partial<GymInput> }) =>
+      api.put<Gym>(`/gym/${id}`, input),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['gyms'] }),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.delete(`/gym/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['gyms'] }),
+  })
+
+  return {
+    gyms: query.data ?? [],
+    loading: query.isPending,
+    error: query.error instanceof Error ? query.error.message : null,
+    createGym: (input: GymInput) => createMutation.mutateAsync(input),
+    updateGym: (id: string, input: Partial<GymInput>) => updateMutation.mutateAsync({ id, input }),
+    deleteGym: (id: string) => deleteMutation.mutateAsync(id),
   }
-
-  async function updateGym(id: string, input: Partial<GymInput>): Promise<Gym> {
-    const gym = await api.put<Gym>(`/gym/${id}`, input)
-    setGyms(prev => prev.map(g => g.id === id ? gym : g))
-    return gym
-  }
-
-  async function deleteGym(id: string): Promise<void> {
-    const snapshot = gyms
-    setGyms(prev => prev.filter(g => g.id !== id))
-    try {
-      await api.delete(`/gym/${id}`)
-    } catch (err) {
-      setGyms(snapshot)
-      throw err
-    }
-  }
-
-  return { gyms, loading, error, createGym, updateGym, deleteGym, reload: () => load() }
 }
