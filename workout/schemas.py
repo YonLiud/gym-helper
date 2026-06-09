@@ -1,22 +1,22 @@
 import uuid
 from datetime import datetime, date
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SetCreate(BaseModel):
     exercise_id: uuid.UUID
-    order: int
-    weight: float | None = None
-    reps: int | None = None
-    notes: str | None = None
+    order: int = Field(ge=0)
+    weight: float | None = Field(default=None, ge=0, le=10000)
+    reps: int | None = Field(default=None, ge=0, le=10000)
+    notes: str | None = Field(default=None, max_length=200)
 
 
 class SetUpdate(BaseModel):
-    order: int | None = None
-    weight: float | None = None
-    reps: int | None = None
-    notes: str | None = None
+    order: int | None = Field(default=None, ge=0)
+    weight: float | None = Field(default=None, ge=0, le=10000)
+    reps: int | None = Field(default=None, ge=0, le=10000)
+    notes: str | None = Field(default=None, max_length=200)
 
 
 class SetResponse(BaseModel):
@@ -35,7 +35,7 @@ class SetResponse(BaseModel):
 class WorkoutCreate(BaseModel):
     gym_id: uuid.UUID | None = None
     date: date
-    notes: str | None = None
+    notes: str | None = Field(default=None, max_length=500)
 
 
 class WorkoutResponse(BaseModel):
