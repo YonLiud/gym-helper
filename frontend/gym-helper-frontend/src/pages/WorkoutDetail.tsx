@@ -7,7 +7,7 @@ import { useExercises } from '../hooks/useExercises'
 import { useWorkout, useWorkouts } from '../hooks/useWorkouts'
 import type { Exercise, WorkoutSet } from '../types'
 
-function fmtDate(dateStr: string, createdAt: string) {
+function fmtDate(dateStr: string, createdAt?: string) {
   const d = new Date(dateStr + 'T00:00:00')
   const today = new Date()
   const sameDay = (a: Date, b: Date) =>
@@ -17,6 +17,7 @@ function fmtDate(dateStr: string, createdAt: string) {
   const label = sameDay(d, today)
     ? 'Today'
     : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+  if (!createdAt) return label
   const time = new Date(createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
   return `${label} · ${time}`
 }

@@ -30,7 +30,7 @@ function WorkoutCard({
   workout: Workout
   gymName: string | null
   exerciseNames: string[]
-  onDelete: () => Promise<void>
+  onDelete: () => Promise<unknown>
 }) {
   const { main, sub } = formatDate(workout.date)
   const [confirming, setConfirming] = useState(false)
