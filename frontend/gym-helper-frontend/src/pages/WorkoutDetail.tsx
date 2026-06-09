@@ -1,10 +1,11 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { ArrowLeft, ChevronRight, Plus, Trash2 } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
-import { Alert, Button, Select, Skeleton } from '../components'
+import { ArrowLeft, Plus, Search, Trash2, X } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Alert, Button, Skeleton } from '../components'
+import { cn } from '../lib/cn'
 import { useExercises } from '../hooks/useExercises'
 import { useWorkout, useWorkouts } from '../hooks/useWorkouts'
-import type { WorkoutSet } from '../types'
+import type { Exercise, WorkoutSet } from '../types'
 
 function fmtDate(dateStr: string) {
   const d = new Date(dateStr + 'T00:00:00')
@@ -17,6 +18,140 @@ function fmtDate(dateStr: string) {
   return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
 }
 
+// ── Exercise picker ───────────────────────────────────────────────────────────
+
+function ExercisePicker({
+  exercises,
+  selectedId,
+  onSelect,
+}: {
+  exercises: Exercise[]
+  selectedId: string
+  onSelect: (id: string) => void
+}) {
+  const [query, setQuery] = useState('')
+  const [muscleFilter, setMuscleFilter] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!selectedId) {
+      setQuery('')
+      setMuscleFilter('')
+    }
+  }, [selectedId])
+
+  const muscleGroups = useMemo(() => {
+    const seen = new Set<string>()
+    for (const e of exercises) {
+      if (e.muscle_group) seen.add(e.muscle_group)
+    }
+    return [...seen].sort()
+  }, [exercises])
+
+  const filtered = useMemo(() => {
+    const q = query.toLowerCase()
+    return exercises
+      .filter(e => {
+        const matchesQuery = !q || e.name.toLowerCase().includes(q)
+        const matchesMuscle = !muscleFilter || e.muscle_group === muscleFilter
+        return matchesQuery && matchesMuscle
+      })
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }, [exercises, query, muscleFilter])
+
+  const selected = selectedId ? exercises.find(e => e.id === selectedId) : null
+
+  if (selected) {
+    return (
+      <div className="flex items-center gap-2">
+        <div className="flex-1 rounded-[10px] border border-(--accent-border) bg-(--surface) px-4 py-3">
+          <p className="text-[14px] font-medium text-(--text-h)">{selected.name}</p>
+          {selected.muscle_group && (
+            <p className="text-[11px] capitalize text-(--text-muted)">{selected.muscle_group}</p>
+          )}
+        </div>
+        <button
+          onClick={() => onSelect('')}
+          className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-[10px] border border-(--border) bg-(--surface) text-(--text-muted) transition-colors hover:text-(--text-h)"
+        >
+          <X size={16} />
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="relative">
+        <Search size={14} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-(--text-muted)" />
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Search exercise…"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          className="w-full rounded-[10px] border border-(--border) bg-(--surface) py-3 pl-10 pr-4 text-[14px] text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors"
+        />
+        {query && (
+          <button
+            onClick={() => { setQuery(''); inputRef.current?.focus() }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-muted)"
+          >
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
+      {muscleGroups.length > 0 && (
+        <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-0.5">
+          {muscleGroups.map(group => (
+            <button
+              key={group}
+              onClick={() => setMuscleFilter(prev => prev === group ? '' : group)}
+              className={cn(
+                'shrink-0 rounded-[20px] border px-3.5 py-1.5 text-[12px] font-medium transition-colors',
+                muscleFilter === group
+                  ? 'border-(--accent-border) bg-(--accent-bg) text-(--accent)'
+                  : 'border-(--border) bg-(--surface) text-(--text-muted)',
+              )}
+            >
+              {group.charAt(0).toUpperCase() + group.slice(1)}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {filtered.length > 0 ? (
+        <div className="max-h-60 overflow-y-auto rounded-[14px] border border-(--border) bg-(--surface)">
+          {filtered.map((ex, i) => (
+            <button
+              key={ex.id}
+              onClick={() => onSelect(ex.id)}
+              className={cn(
+                'flex w-full items-start px-4 py-3 text-left transition-colors hover:bg-(--code-bg)',
+                i > 0 && 'border-t border-(--border)',
+              )}
+            >
+              <div>
+                <p className="text-[14px] text-(--text-h)">{ex.name}</p>
+                {(ex.muscle_group || ex.equipment_type) && (
+                  <p className="text-[11px] capitalize text-(--text-muted)">
+                    {[ex.muscle_group, ex.equipment_type].filter(Boolean).join(' · ')}
+                  </p>
+                )}
+              </div>
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="py-2 text-[13px] text-(--text-muted)">No exercises found.</p>
+      )}
+    </div>
+  )
+}
+
+// ── Set row ───────────────────────────────────────────────────────────────────
+
 function SetRow({ set, onDelete }: { set: WorkoutSet; onDelete: () => void }) {
   return (
     <div className="flex items-center gap-3 rounded-[10px] bg-(--code-bg) px-4 py-2.5">
@@ -24,15 +159,61 @@ function SetRow({ set, onDelete }: { set: WorkoutSet; onDelete: () => void }) {
         {set.weight != null ? `${set.weight} kg` : 'BW'}
         {set.reps != null && <span className="text-(--text-muted)"> × {set.reps}</span>}
       </span>
-      <button
-        onClick={onDelete}
-        className="text-(--text-disabled) transition-colors hover:text-red-500"
-      >
+      <button onClick={onDelete} className="text-(--text-disabled) transition-colors hover:text-red-500">
         <Trash2 size={15} />
       </button>
     </div>
   )
 }
+
+// ── Inline title editor ───────────────────────────────────────────────────────
+
+function InlineTitle({
+  value,
+  onSave,
+}: {
+  value: string | null
+  onSave: (newValue: string | null) => void
+}) {
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState('')
+
+  function startEdit() {
+    setDraft(value ?? '')
+    setEditing(true)
+  }
+
+  function commit() {
+    setEditing(false)
+    const trimmed = draft.trim() || null
+    if (trimmed !== value) onSave(trimmed)
+  }
+
+  if (editing) {
+    return (
+      <input
+        autoFocus
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={e => { if (e.key === 'Enter') e.currentTarget.blur() }}
+        placeholder="Add title…"
+        className="w-full border-b border-(--accent) bg-transparent text-[16px] font-medium text-(--text-h) placeholder:text-(--text-disabled) focus:outline-none pb-0.5"
+      />
+    )
+  }
+
+  return (
+    <button onClick={startEdit} className="w-full truncate text-left text-[16px] font-medium transition-colors hover:text-(--text-muted)">
+      {value
+        ? <span className="text-(--text-h)">{value}</span>
+        : <span className="text-(--text-disabled)">Add title…</span>
+      }
+    </button>
+  )
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 type View = 'logger' | 'overview'
 
@@ -40,7 +221,7 @@ export function WorkoutDetailPage() {
   const { id } = useParams({ from: '/workouts/$id' })
   const navigate = useNavigate()
 
-  const { workout, loading, error, addSet, deleteSet } = useWorkout(id)
+  const { workout, loading, error, addSet, updateWorkout, deleteWorkout, deleteSet } = useWorkout(id)
   const { exercises } = useExercises()
   const { workouts } = useWorkouts()
 
@@ -50,6 +231,9 @@ export function WorkoutDetailPage() {
   const [reps, setReps] = useState('')
   const [adding, setAdding] = useState(false)
   const [addError, setAddError] = useState<string | null>(null)
+
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     if (workout && view === null) {
@@ -98,8 +282,7 @@ export function WorkoutDetailPage() {
 
   async function handleAddSet(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!exerciseId || !workout) return
-    if (!reps) return
+    if (!exerciseId || !workout || !reps) return
     setAdding(true)
     setAddError(null)
     try {
@@ -107,7 +290,7 @@ export function WorkoutDetailPage() {
         exercise_id: exerciseId,
         order: workout.sets.length,
         weight: weight ? parseFloat(weight) : null,
-        reps: reps ? parseInt(reps, 10) : null,
+        reps: parseInt(reps, 10),
       })
       setWeight('')
       setReps('')
@@ -116,6 +299,24 @@ export function WorkoutDetailPage() {
     } finally {
       setAdding(false)
     }
+  }
+
+  async function handleDeleteWorkout() {
+    setDeleting(true)
+    try {
+      await deleteWorkout()
+      navigate({ to: '/workouts' })
+    } catch {
+      setDeleting(false)
+      setConfirmDelete(false)
+    }
+  }
+
+  async function handleSaveTitle(newNotes: string | null) {
+    if (!workout) return
+    try {
+      await updateWorkout({ date: workout.date, gym_id: workout.gym_id, notes: newNotes })
+    } catch { /* silent — optimistic update already set in hook */ }
   }
 
   function openLoggerForExercise(preselectedId?: string) {
@@ -131,7 +332,10 @@ export function WorkoutDetailPage() {
       <div className="mx-auto max-w-lg space-y-5">
         <div className="flex items-center gap-3">
           <Skeleton className="h-8.5 w-8.5 shrink-0" />
-          <Skeleton className="h-5 w-32" />
+          <div className="flex-1 space-y-1.5">
+            <Skeleton className="h-3.5 w-24" />
+            <Skeleton className="h-5 w-40" />
+          </div>
         </div>
         <Skeleton className="h-12 w-full" />
         {Array.from({ length: 3 }).map((_, i) => (
@@ -148,46 +352,41 @@ export function WorkoutDetailPage() {
   if (error) return <Alert variant="error">{error}</Alert>
   if (!workout) return null
 
-  const exerciseOptions = [...exercises]
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map(e => ({ value: e.id, label: e.name }))
+  // ── Logger view ─────────────────────────────────────────────────────────────
 
-  // ── Logger view ──────────────────────────────────────────────────────────────
   if (view === 'logger') {
-    const selectedExercise = exerciseId ? exerciseMap.get(exerciseId) : null
     const canGoToOverview = workout.sets.length > 0
 
     return (
       <div className="mx-auto max-w-lg space-y-5">
+        {/* Header */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => canGoToOverview ? setView('overview') : navigate({ to: '/workouts' })}
-            className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-[10px] bg-(--surface) border border-(--border) text-(--text-muted) transition-colors hover:text-(--text-h)"
+            className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-[10px] border border-(--border) bg-(--surface) text-(--text-muted) transition-colors hover:text-(--text-h)"
           >
             <ArrowLeft size={17} />
           </button>
-          <div className="min-w-0">
-            <p className="truncate text-[15px] font-medium text-(--text-h)">{fmtDate(workout.date)}</p>
-            {workout.notes && (
-              <p className="truncate text-[12px] text-(--text-muted)">{workout.notes}</p>
-            )}
+          <div className="min-w-0 flex-1">
+            <p className="text-[12px] text-(--text-muted)">{fmtDate(workout.date)}</p>
+            <InlineTitle value={workout.notes} onSave={handleSaveTitle} />
           </div>
         </div>
 
-        <Select
-          label="Exercise"
-          value={exerciseId}
-          onChange={e => {
-            setExerciseId(e.target.value)
+        {/* Exercise picker */}
+        <ExercisePicker
+          exercises={exercises}
+          selectedId={exerciseId}
+          onSelect={id => {
+            setExerciseId(id)
             setWeight('')
             setReps('')
           }}
-          options={exerciseOptions}
-          placeholder="Pick an exercise…"
         />
 
-        {selectedExercise && (
+        {exerciseId && (
           <>
+            {/* Previous performance */}
             {prevPerformance ? (
               <div className="rounded-[14px] border border-(--border) bg-(--surface) p-4">
                 <p className="mb-2.5 text-[11px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">
@@ -204,9 +403,12 @@ export function WorkoutDetailPage() {
                 </div>
               </div>
             ) : (
-              <p className="text-[13px] text-(--text-muted)">No previous data for {selectedExercise.name}.</p>
+              <p className="text-[13px] text-(--text-muted)">
+                No previous data for {exerciseMap.get(exerciseId)?.name}.
+              </p>
             )}
 
+            {/* Sets logged this session */}
             {currentExerciseSets.length > 0 && (
               <div className="space-y-2">
                 <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">This session</p>
@@ -216,6 +418,7 @@ export function WorkoutDetailPage() {
               </div>
             )}
 
+            {/* Add set form */}
             {addError && <Alert variant="error">{addError}</Alert>}
             <form onSubmit={handleAddSet} className="space-y-3">
               <div className="flex gap-3">
@@ -229,7 +432,7 @@ export function WorkoutDetailPage() {
                     placeholder={currentExerciseSets.at(-1)?.weight?.toString() ?? 'e.g. 80'}
                     value={weight}
                     onChange={e => setWeight(e.target.value)}
-                    className="w-full rounded-lg border border-(--border) bg-(--surface) px-3 py-3 text-[15px] font-medium text-center text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors"
+                    className="w-full rounded-lg border border-(--border) bg-(--surface) px-3 py-3 text-center text-[15px] font-medium text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors"
                   />
                 </div>
                 <div className="flex-1">
@@ -242,17 +445,11 @@ export function WorkoutDetailPage() {
                     placeholder={currentExerciseSets.at(-1)?.reps?.toString() ?? 'e.g. 8'}
                     value={reps}
                     onChange={e => setReps(e.target.value)}
-                    className="w-full rounded-lg border border-(--border) bg-(--surface) px-3 py-3 text-[15px] font-medium text-center text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors"
+                    className="w-full rounded-lg border border-(--border) bg-(--surface) px-3 py-3 text-center text-[15px] font-medium text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors"
                   />
                 </div>
               </div>
-              <Button
-                type="submit"
-                variant="secondary"
-                className="w-full"
-                loading={adding}
-                disabled={!reps}
-              >
+              <Button type="submit" variant="secondary" className="w-full" loading={adding} disabled={!reps}>
                 <Plus size={16} />
                 Add Set
               </Button>
@@ -260,37 +457,60 @@ export function WorkoutDetailPage() {
           </>
         )}
 
+        {/* Done CTA */}
         {workout.sets.length > 0 && (
           <button
             onClick={() => setView('overview')}
             className="flex w-full items-center justify-center gap-2 rounded-[14px] bg-(--accent) py-4.25 text-[15px] font-medium text-[#0f0f0f] transition-opacity hover:opacity-90"
           >
             Done — see workout
-            <ChevronRight size={16} />
           </button>
         )}
       </div>
     )
   }
 
-  // ── Overview view ─────────────────────────────────────────────────────────────
+  // ── Overview view ────────────────────────────────────────────────────────────
+
   return (
     <div className="mx-auto max-w-lg space-y-5">
+      {/* Header */}
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate({ to: '/workouts' })}
-          className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-[10px] bg-(--surface) border border-(--border) text-(--text-muted) transition-colors hover:text-(--text-h)"
+          className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-[10px] border border-(--border) bg-(--surface) text-(--text-muted) transition-colors hover:text-(--text-h)"
         >
           <ArrowLeft size={17} />
         </button>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[15px] font-medium text-(--text-h)">{fmtDate(workout.date)}</p>
-          {workout.notes && (
-            <p className="truncate text-[12px] text-(--text-muted)">{workout.notes}</p>
-          )}
+          <p className="text-[12px] text-(--text-muted)">{fmtDate(workout.date)}</p>
+          <InlineTitle value={workout.notes} onSave={handleSaveTitle} />
         </div>
+        {/* Delete */}
+        {confirmDelete ? (
+          <div className="flex shrink-0 items-center gap-3">
+            <button
+              onClick={handleDeleteWorkout}
+              disabled={deleting}
+              className="text-[13px] font-medium text-red-500 disabled:opacity-50"
+            >
+              {deleting ? 'Deleting…' : 'Delete'}
+            </button>
+            <button onClick={() => setConfirmDelete(false)} className="text-[13px] text-(--text-muted)">
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setConfirmDelete(true)}
+            className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-[10px] border border-(--border) bg-(--surface) text-(--text-muted) transition-colors hover:border-red-900 hover:text-red-500"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
 
+      {/* Exercise groups */}
       {exerciseGroups.length === 0 ? (
         <p className="text-[13px] text-(--text-muted)">No sets logged yet.</p>
       ) : (

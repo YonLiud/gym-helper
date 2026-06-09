@@ -63,6 +63,16 @@ export function useWorkout(id: string) {
     return set
   }
 
+  async function updateWorkout(input: WorkoutInput): Promise<Workout> {
+    const updated = await api.put<Workout>(`/workout/${id}`, input)
+    setWorkout(prev => prev ? { ...prev, ...updated } : prev)
+    return updated
+  }
+
+  async function deleteWorkout(): Promise<void> {
+    await api.delete(`/workout/${id}`)
+  }
+
   async function updateSet(setId: string, input: SetUpdateInput): Promise<WorkoutSet> {
     const set = await api.put<WorkoutSet>(`/workout/${id}/sets/${setId}`, input)
     setWorkout(prev => prev ? { ...prev, sets: prev.sets.map(s => s.id === setId ? set : s) } : prev)
@@ -74,5 +84,5 @@ export function useWorkout(id: string) {
     setWorkout(prev => prev ? { ...prev, sets: prev.sets.filter(s => s.id !== setId) } : prev)
   }
 
-  return { workout, loading, error, addSet, updateSet, deleteSet, reload: load }
+  return { workout, loading, error, addSet, updateWorkout, deleteWorkout, updateSet, deleteSet, reload: load }
 }
