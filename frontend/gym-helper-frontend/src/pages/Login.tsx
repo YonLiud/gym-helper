@@ -17,7 +17,7 @@ export function LoginPage() {
     setLoading(true)
     try {
       await login(username, password)
-      navigate({ to: '/workouts' })
+      navigate({ to: '/home' })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
