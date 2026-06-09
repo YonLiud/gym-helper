@@ -7,19 +7,24 @@ export function useGyms() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal?: AbortSignal) => {
     try {
       setError(null)
-      const data = await api.get<Gym[]>('/gym')
+      const data = await api.get<Gym[]>('/gym', signal)
       setGyms(data)
     } catch (e) {
+      if (e instanceof Error && e.name === 'AbortError') return
       setError(e instanceof Error ? e.message : 'Failed to load gyms')
     } finally {
       setLoading(false)
     }
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    const controller = new AbortController()
+    load(controller.signal)
+    return () => controller.abort()
+  }, [load])
 
   async function createGym(input: GymInput): Promise<Gym> {
     const gym = await api.post<Gym>('/gym', input)
@@ -44,5 +49,5 @@ export function useGyms() {
     }
   }
 
-  return { gyms, loading, error, createGym, updateGym, deleteGym, reload: load }
+  return { gyms, loading, error, createGym, updateGym, deleteGym, reload: () => load() }
 }

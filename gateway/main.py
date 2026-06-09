@@ -5,6 +5,7 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from jose import JWTError, jwt
+from starlette.requests import ClientDisconnect
 
 JWT_SECRET = os.environ["JWT_SECRET"]
 JWT_ALGORITHM = "HS256"
@@ -59,12 +60,17 @@ async def _proxy(path: str, request: Request, extra_headers: dict = {}) -> Respo
     headers = {k: v for k, v in request.headers.items() if k.lower() not in _HOP_BY_HOP}
     headers.update(extra_headers)
 
+    try:
+        body = await request.body()
+    except ClientDisconnect:
+        return Response(status_code=499)
+
     async with httpx.AsyncClient() as client:
         resp = await client.request(
             method=request.method,
             url=f"{upstream}{sub_path}",
             headers=headers,
-            content=await request.body(),
+            content=body,
             params=request.query_params,
         )
 

@@ -7,22 +7,27 @@ export function useWorkouts(gymId?: string) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal?: AbortSignal) => {
     try {
       setError(null)
       const path = gymId
         ? `/workout?gym_id=${encodeURIComponent(gymId)}`
         : '/workout'
-      const data = await api.get<Workout[]>(path)
+      const data = await api.get<Workout[]>(path, signal)
       setWorkouts(data)
     } catch (e) {
+      if (e instanceof Error && e.name === 'AbortError') return
       setError(e instanceof Error ? e.message : 'Failed to load workouts')
     } finally {
       setLoading(false)
     }
   }, [gymId])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    const controller = new AbortController()
+    load(controller.signal)
+    return () => controller.abort()
+  }, [load])
 
   async function createWorkout(input: WorkoutInput): Promise<Workout> {
     const workout = await api.post<Workout>('/workout', input)
@@ -35,7 +40,7 @@ export function useWorkouts(gymId?: string) {
     setWorkouts(prev => prev.filter(w => w.id !== id))
   }
 
-  return { workouts, loading, error, createWorkout, deleteWorkout, reload: load }
+  return { workouts, loading, error, createWorkout, deleteWorkout, reload: () => load() }
 }
 
 export function useWorkout(id: string) {
@@ -43,19 +48,24 @@ export function useWorkout(id: string) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal?: AbortSignal) => {
     try {
       setError(null)
-      const data = await api.get<Workout>(`/workout/${id}`)
+      const data = await api.get<Workout>(`/workout/${id}`, signal)
       setWorkout(data)
     } catch (e) {
+      if (e instanceof Error && e.name === 'AbortError') return
       setError(e instanceof Error ? e.message : 'Failed to load workout')
     } finally {
       setLoading(false)
     }
   }, [id])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    const controller = new AbortController()
+    load(controller.signal)
+    return () => controller.abort()
+  }, [load])
 
   async function addSet(input: SetInput): Promise<WorkoutSet> {
     const set = await api.post<WorkoutSet>(`/workout/${id}/sets`, input)
@@ -84,5 +94,5 @@ export function useWorkout(id: string) {
     setWorkout(prev => prev ? { ...prev, sets: prev.sets.filter(s => s.id !== setId) } : prev)
   }
 
-  return { workout, loading, error, addSet, updateWorkout, deleteWorkout, updateSet, deleteSet, reload: load }
+  return { workout, loading, error, addSet, updateWorkout, deleteWorkout, updateSet, deleteSet, reload: () => load() }
 }
