@@ -7,15 +7,18 @@ import { useExercises } from '../hooks/useExercises'
 import { useWorkout, useWorkouts } from '../hooks/useWorkouts'
 import type { Exercise, WorkoutSet } from '../types'
 
-function fmtDate(dateStr: string) {
+function fmtDate(dateStr: string, createdAt: string) {
   const d = new Date(dateStr + 'T00:00:00')
   const today = new Date()
   const sameDay = (a: Date, b: Date) =>
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate()
-  if (sameDay(d, today)) return 'Today'
-  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+  const label = sameDay(d, today)
+    ? 'Today'
+    : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+  const time = new Date(createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  return `${label} · ${time}`
 }
 
 // ── Exercise picker ───────────────────────────────────────────────────────────
@@ -369,7 +372,7 @@ export function WorkoutDetailPage() {
             <ArrowLeft size={17} />
           </button>
           <div className="min-w-0 flex-1">
-            <p className="text-[12px] text-(--text-muted)">{fmtDate(workout.date)}</p>
+            <p className="text-[12px] text-(--text-muted)">{fmtDate(workout.date, workout.created_at)}</p>
             <InlineTitle value={workout.notes} onSave={handleSaveTitle} />
           </div>
         </div>
@@ -484,7 +487,7 @@ export function WorkoutDetailPage() {
           <ArrowLeft size={17} />
         </button>
         <div className="min-w-0 flex-1">
-          <p className="text-[12px] text-(--text-muted)">{fmtDate(workout.date)}</p>
+          <p className="text-[12px] text-(--text-muted)">{fmtDate(workout.date, workout.created_at)}</p>
           <InlineTitle value={workout.notes} onSave={handleSaveTitle} />
         </div>
         {/* Delete */}
