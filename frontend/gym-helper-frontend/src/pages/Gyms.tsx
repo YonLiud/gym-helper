@@ -50,7 +50,7 @@ function GymCard({
   onDelete,
 }: {
   gym: Gym
-  onUpdate: (input: GymInput) => Promise<void>
+  onUpdate: (input: GymInput) => Promise<unknown>
   onDelete: () => void
 }) {
   const [editing, setEditing] = useState(false)
