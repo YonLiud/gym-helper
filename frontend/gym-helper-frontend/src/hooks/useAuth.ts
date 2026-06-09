@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
 import type { User } from '../types'
 
@@ -11,6 +12,7 @@ function getStoredUser(): User | null {
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(getStoredUser)
+  const queryClient = useQueryClient()
 
   async function login(username: string, password: string) {
     const data = await api.post<User>('/auth/login', { username, password })
@@ -22,6 +24,7 @@ export function useAuth() {
     await api.post('/auth/logout', {})
     localStorage.removeItem(STORAGE_KEY)
     setUser(null)
+    queryClient.clear()
   }
 
   return { user, login, logout, isAuthenticated: !!user }
