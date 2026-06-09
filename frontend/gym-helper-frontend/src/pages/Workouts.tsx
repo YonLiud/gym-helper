@@ -7,24 +7,19 @@ import { useGyms } from '../hooks/useGyms'
 import { useWorkouts } from '../hooks/useWorkouts'
 import type { Workout } from '../types'
 
+
 function formatDate(dateStr: string): { main: string; sub: string } {
   const d = new Date(dateStr + 'T00:00:00')
   const today = new Date()
-  const yesterday = new Date(today)
-  yesterday.setDate(today.getDate() - 1)
-
-  const sameDay = (a: Date, b: Date) =>
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-
-  if (sameDay(d, today)) return { main: 'Today', sub: '' }
-  if (sameDay(d, yesterday)) return { main: 'Yesterday', sub: '' }
-
+  today.setHours(0, 0, 0, 0)
+  const diffDays = Math.round((today.getTime() - d.getTime()) / 86_400_000)
   const weekday = d.toLocaleDateString('en-US', { weekday: 'short' })
+
+  if (diffDays === 0) return { main: weekday, sub: 'Today' }
+  if (diffDays <= 6) return { main: weekday, sub: `${diffDays}d ago` }
+
   const month = d.toLocaleDateString('en-US', { month: 'short' })
-  const day = d.getDate()
-  return { main: weekday, sub: `${month} ${day}` }
+  return { main: weekday, sub: `${month} ${d.getDate()}` }
 }
 
 function WorkoutCard({
