@@ -14,10 +14,13 @@ function NavItem({ to, label, Icon }: { to: string; label: string; Icon: LucideI
     <Link
       to={to}
       className={cn(
-        'flex flex-1 flex-col items-center gap-1 py-2 text-[10px] transition-colors',
+        'relative flex flex-1 flex-col items-center gap-1 py-2 text-[10px] transition-colors',
         isActive ? 'text-(--accent)' : 'text-(--text-disabled) hover:text-(--text-muted)',
       )}
     >
+      {isActive && (
+        <span className="absolute top-0 left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-(--accent)" />
+      )}
       <Icon size={20} />
       <span>{label}</span>
     </Link>
@@ -121,7 +124,7 @@ export function AppLayout() {
           <div className="flex flex-1 justify-center">
             <Link
               to="/workouts/new"
-              className="relative -top-5 flex h-14 w-14 items-center justify-center rounded-full bg-(--accent) text-[#0f0f0f] transition-transform active:scale-95"
+              className="relative -top-5 flex h-14 w-14 items-center justify-center rounded-full bg-(--accent) text-[#0f0f0f] shadow-[0_2px_20px_rgba(200,247,58,0.45)] transition-transform active:scale-95"
             >
               <Plus size={24} />
             </Link>

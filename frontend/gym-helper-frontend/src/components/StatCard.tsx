@@ -6,7 +6,10 @@ interface StatCardProps {
 
 export function StatCard({ label, value, sub }: StatCardProps) {
   return (
-    <div className="flex-1 rounded-[14px] bg-(--surface) px-4 py-4">
+    <div
+      className="flex-1 rounded-[14px] bg-(--surface) px-4 py-4"
+      style={{ boxShadow: '0 0 0 1px rgba(200,247,58,0.08), 0 4px 16px rgba(200,247,58,0.04)' }}
+    >
       <p className="text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">{label}</p>
       <p className="mt-2 text-[30px] font-bold leading-none tracking-tight text-(--text-h)">{value}</p>
       {sub && <p className="mt-1.5 text-[12px] text-(--text-muted)">{sub}</p>}
