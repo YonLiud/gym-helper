@@ -19,8 +19,6 @@ services:
       GYM_URL: http://gym:8000
       WORKOUT_URL: http://workout:8000
       JWT_SECRET: ${JWT_SECRET}
-    ports:
-      - "8000:8000"
     labels:
       - traefik.enable=true
       - traefik.http.routers.gateway.rule=Host(`gym.yxnliu.net`) && PathPrefix(`/api`)
@@ -85,8 +83,6 @@ services:
     environment:
       POSTGRES_USER: gymhelper
       POSTGRES_PASSWORD: gymhelper
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
