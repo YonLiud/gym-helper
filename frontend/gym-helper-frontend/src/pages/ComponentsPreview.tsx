@@ -6,9 +6,12 @@ import {
   Card,
   EmptyState,
   Input,
+  MuscleGroupBar,
   PageHeader,
+  RecentPRs,
   Select,
   Spinner,
+  StatCard,
   Textarea,
 } from '../components'
 
@@ -140,6 +143,34 @@ export function ComponentsPreviewPage() {
             action={<Button size="sm">Add workout</Button>}
           />
         </Card>
+      </Section>
+
+      <Section title="StatCard">
+        <div className="grid grid-cols-2 gap-3">
+          <StatCard label="This week" value={4} sub="workouts" />
+          <StatCard label="Streak" value={3} sub="weeks" />
+          <StatCard label="Volume" value="12.4k" sub="kg this week" />
+          <StatCard label="Last session" value="1" sub="day ago" />
+        </div>
+      </Section>
+
+      <Section title="MuscleGroupBar">
+        <MuscleGroupBar groups={[
+          { name: 'Chest', count: 42, daysSinceLastTrained: 2 },
+          { name: 'Back', count: 38, daysSinceLastTrained: 4 },
+          { name: 'Legs', count: 31, daysSinceLastTrained: 10 },
+          { name: 'Shoulders', count: 19, daysSinceLastTrained: 18 },
+          { name: 'Arms', count: 14, daysSinceLastTrained: 8 },
+        ]} />
+      </Section>
+
+      <Section title="RecentPRs">
+        <RecentPRs prs={[
+          { exerciseId: '1', exerciseName: 'Bench Press', muscleGroup: 'Chest', weight: 100, reps: 5 },
+          { exerciseId: '2', exerciseName: 'Squat', muscleGroup: 'Legs', weight: 140, reps: 3 },
+          { exerciseId: '3', exerciseName: 'Deadlift', muscleGroup: 'Back', weight: 180, reps: 1 },
+          { exerciseId: '4', exerciseName: 'Overhead Press', muscleGroup: 'Shoulders', weight: 70, reps: 5 },
+        ]} />
       </Section>
     </div>
   )

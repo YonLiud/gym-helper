@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
+import { MuscleGroupBar, RecentPRs, Skeleton, StatCard } from '../components'
 import { useAuth } from '../hooks/useAuth'
+import { useWorkoutStats } from '../hooks/useWorkoutStats'
 
 const GREETINGS = {
   morning: (name: string) => [
@@ -39,19 +41,76 @@ function getGreeting(name: string): string {
   return pool[Math.floor(Math.random() * pool.length)]
 }
 
+function formatVolume(kg: number): string {
+  if (kg === 0) return '—'
+  return kg >= 1000 ? `${(kg / 1000).toFixed(1)}k` : String(Math.round(kg))
+}
+
+function formatLastSession(days: number | null): { value: string; sub: string } {
+  if (days === null) return { value: '—', sub: 'no sessions yet' }
+  if (days === 0) return { value: 'Today', sub: 'keep it up' }
+  if (days === 1) return { value: '1', sub: 'day ago' }
+  return { value: String(days), sub: 'days ago' }
+}
+
 export function HomePage() {
   const { user } = useAuth()
   const greeting = useMemo(() => user ? getGreeting(user.username) : null, [user?.username])
+  const { thisWeek, streak, volumeThisWeek, daysSinceLastWorkout, muscleGroups, prs, loading } = useWorkoutStats()
+
+  const lastSession = formatLastSession(daysSinceLastWorkout)
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {greeting && (
         <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.4px', lineHeight: 1.15 }}>
           {greeting}
         </h1>
       )}
 
-      {/* Analytics coming soon */}
+      {loading ? (
+        <div className="space-y-4">
+          <div className="flex gap-3">
+            <Skeleton className="h-24 flex-1 rounded-[14px]" />
+            <Skeleton className="h-24 flex-1 rounded-[14px]" />
+          </div>
+          <div className="flex gap-3">
+            <Skeleton className="h-24 flex-1 rounded-[14px]" />
+            <Skeleton className="h-24 flex-1 rounded-[14px]" />
+          </div>
+          <Skeleton className="h-40 w-full rounded-[14px]" />
+          <Skeleton className="h-48 w-full rounded-[14px]" />
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 gap-3">
+            <StatCard
+              label="This week"
+              value={thisWeek}
+              sub={thisWeek === 1 ? 'workout' : 'workouts'}
+            />
+            <StatCard
+              label="Streak"
+              value={streak}
+              sub={streak === 1 ? 'week' : 'weeks'}
+            />
+            <StatCard
+              label="Volume"
+              value={formatVolume(volumeThisWeek)}
+              sub={volumeThisWeek > 0 ? 'kg this week' : undefined}
+            />
+            <StatCard
+              label="Last session"
+              value={lastSession.value}
+              sub={lastSession.sub}
+            />
+          </div>
+
+          <MuscleGroupBar groups={muscleGroups} />
+
+          <RecentPRs prs={prs} />
+        </>
+      )}
     </div>
   )
 }
