@@ -1,12 +1,15 @@
 import { useState } from 'react'
+import { Activity, Dumbbell, MapPin, Sparkles } from 'lucide-react'
 import {
   Alert,
   AuthFooter,
   Badge,
   Button,
   Card,
+  CTACard,
   EmptyState,
   FooterLinks,
+  HintRow,
   Input,
   MuscleGroupBar,
   PageHeader,
@@ -100,6 +103,35 @@ export function ComponentsPreviewPage() {
           options={[{ value: 'a', label: 'Option A' }]}
           error="Please select an option."
         />
+      </Section>
+
+      <Section title="CTACard">
+        <CTACard
+          to="/home"
+          icon={<Dumbbell size={22} color="var(--accent)" />}
+          title="Log your first workout"
+          description="Sets, reps, weight — all in one place."
+        />
+        <CTACard
+          onClick={() => {}}
+          icon={<Sparkles size={22} color="var(--accent)" />}
+          title="Load default exercises"
+          description="A curated set of common exercises across all muscle groups."
+        />
+        <CTACard
+          onClick={() => {}}
+          disabled
+          icon={<Sparkles size={22} color="var(--accent)" />}
+          title="Disabled state"
+          description="Button variant when disabled."
+        />
+      </Section>
+
+      <Section title="HintRow">
+        <HintRow to="/home" Icon={Activity} label="Build your exercise catalog" badge="needed to log sets" />
+        <HintRow to="/home" Icon={MapPin} label="Add a gym to tag your sessions" badge="optional" />
+        <HintRow onClick={() => {}} Icon={Dumbbell} label="Add exercises manually" />
+        <HintRow onClick={() => {}} open Icon={Dumbbell} label="Open state (chevron rotated)" />
       </Section>
 
       <Section title="Card">
