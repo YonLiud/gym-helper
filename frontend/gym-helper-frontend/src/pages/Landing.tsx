@@ -390,7 +390,7 @@ export function LandingPage() {
             <span className="h-3 w-3 rounded-full bg-[#3a3a3a]" />
             <span className="h-3 w-3 rounded-full bg-[#3a3a3a]" />
             <span className="h-3 w-3 rounded-full bg-[#3a3a3a]" />
-            <span className="ml-3 text-[11px] font-medium text-(--text-disabled)">gym helper — home</span>
+            <span className="ml-3 text-[11px] font-medium text-(--text-disabled)">Gym Helper — home</span>
           </div>
 
           <FadeUp>

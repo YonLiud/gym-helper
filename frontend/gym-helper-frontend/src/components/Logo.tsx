@@ -43,7 +43,7 @@ export function Logo({ size = 22, wordmark = true, className = '' }: LogoProps) 
             color: 'var(--text-h)',
           }}
         >
-          gym helper
+          Gym Helper
         </span>
       )}
     </span>

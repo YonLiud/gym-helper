@@ -1,7 +1,8 @@
-import { useNavigate } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { Activity, ArrowLeft, ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Alert, Button, Input, Select } from '../components'
+import { useExercises } from '../hooks/useExercises'
 import { useGyms } from '../hooks/useGyms'
 import { useWorkouts } from '../hooks/useWorkouts'
 
@@ -21,6 +22,7 @@ export function WorkoutNewPage() {
   const navigate = useNavigate()
   const { gyms, loading: loadingGyms } = useGyms()
   const { workouts, loading: loadingWorkouts, createWorkout } = useWorkouts()
+  const { exercises, loading: loadingExercises } = useExercises()
 
   const [gymId, setGymId] = useState('')
   const [title, setTitle] = useState(todayTitle())
@@ -52,8 +54,9 @@ export function WorkoutNewPage() {
     }
   }
 
-  const loading = loadingGyms || loadingWorkouts
+  const loading = loadingGyms || loadingWorkouts || loadingExercises
   const gymOptions = gyms.map(g => ({ value: g.id, label: g.name }))
+  const noExercises = !loadingExercises && exercises.length === 0
 
   return (
     <div className="mx-auto max-w-lg">
@@ -66,6 +69,26 @@ export function WorkoutNewPage() {
         </button>
         <h2>New Workout</h2>
       </div>
+
+      {noExercises && (
+        <Link
+          to="/exercises"
+          className="glass mb-4 flex items-center gap-4 rounded-[18px] p-5 transition-opacity active:opacity-80"
+          style={{ borderColor: 'rgba(200,247,58,0.22)' }}
+        >
+          <div
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px]"
+            style={{ background: 'rgba(200,247,58,0.1)', border: '1px solid rgba(200,247,58,0.2)' }}
+          >
+            <Activity size={22} color="var(--accent)" />
+          </div>
+          <div className="flex-1">
+            <p className="text-[15px] font-semibold text-(--text-h)">Add exercises first</p>
+            <p className="mt-0.5 text-[13px] text-(--text-muted)">You need at least one exercise to log sets.</p>
+          </div>
+          <ArrowRight size={18} className="shrink-0 text-(--text-disabled)" />
+        </Link>
+      )}
 
       {error && <Alert variant="error" className="mb-4">{error}</Alert>}
 
@@ -91,7 +114,7 @@ export function WorkoutNewPage() {
           size="lg"
           className="w-full"
           loading={submitting}
-          disabled={loading}
+          disabled={loading || noExercises}
         >
           Start Workout
         </Button>

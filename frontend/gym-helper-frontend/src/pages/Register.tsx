@@ -27,7 +27,7 @@ export function RegisterPage() {
           </Link>
           <div>
             <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.5px' }}>Create an account</h1>
-            <p className="mt-1.5 text-[14px] text-(--text-muted)">Join gym helper and start tracking.</p>
+            <p className="mt-1.5 text-[14px] text-(--text-muted)">Join Gym Helper and start tracking.</p>
           </div>
         </div>
 
@@ -47,7 +47,7 @@ export function RegisterPage() {
 
           <p className="mt-3 text-[15px] font-semibold text-(--text-h)">Registration is closed</p>
           <p className="mt-2 text-[13px] leading-relaxed text-(--text-muted)">
-            gym helper is currently invite-only. We'll open up to everyone soon — check back later.
+            Gym Helper is currently invite-only. We'll open up to everyone soon — check back later.
           </p>
         </div>
 

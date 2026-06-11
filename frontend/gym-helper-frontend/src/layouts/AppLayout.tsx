@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
-import { Activity, Dumbbell, LogOut, MapPin, Menu, Plus, X } from 'lucide-react'
+import { Activity, Dumbbell, Home, LogOut, MapPin, Menu, Plus, X } from 'lucide-react'
 import { cn } from '../lib/cn'
 import { useAuth } from '../hooks/useAuth'
 import { Logo } from '../components/Logo'
@@ -135,27 +135,16 @@ export function AppLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const pathname = useRouterState({ select: s => s.location.pathname })
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [menuClosing, setMenuClosing] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
-
-  function closeMenu() {
-    setMenuClosing(true)
-    setTimeout(() => {
-      setMenuOpen(false)
-      setMenuClosing(false)
-    }, 100)
-  }
+  const [panelOpen, setPanelOpen] = useState(false)
+  const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    function onClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        closeMenu()
-      }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setPanelOpen(false)
     }
-    if (menuOpen) document.addEventListener('mousedown', onClickOutside)
-    return () => document.removeEventListener('mousedown', onClickOutside)
-  }, [menuOpen])
+    if (panelOpen) document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [panelOpen])
 
   async function handleLogout() {
     await logout()
@@ -184,55 +173,102 @@ export function AppLayout() {
         <ParticleBackground />
       </div>
       <ToastStack />
+
+      {/* slide panel backdrop */}
+      <div
+        className={cn(
+          'fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px] transition-opacity duration-200',
+          panelOpen ? 'opacity-100' : 'opacity-0 pointer-events-none',
+        )}
+        onClick={() => setPanelOpen(false)}
+      />
+
+      {/* slide panel */}
+      <div
+        ref={panelRef}
+        className={cn(
+          'fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-l border-(--border) bg-(--bg) transition-transform duration-200 ease-out',
+          panelOpen ? 'translate-x-0' : 'translate-x-full',
+        )}
+      >
+        {/* panel header */}
+        <div className="flex items-center justify-between border-b border-(--border) px-5 py-3.5">
+          <div>
+            <p className="text-[11px] text-(--text-muted)">Signed in as</p>
+            <p className="text-[13px] font-semibold text-(--text-h)">@{user?.username}</p>
+          </div>
+          <button
+            onClick={() => setPanelOpen(false)}
+            className="flex h-8 w-8 items-center justify-center rounded-[10px] text-(--text-muted) transition-colors hover:bg-(--surface) hover:text-(--text-h)"
+          >
+            <X size={17} />
+          </button>
+        </div>
+
+        {/* panel nav */}
+        <nav className="flex-1 px-3 py-3">
+          <Link
+            to="/exercises"
+            onClick={() => setPanelOpen(false)}
+            className={cn(
+              'flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[14px] transition-colors',
+              pathname.startsWith('/exercises')
+                ? 'bg-(--surface) text-(--accent)'
+                : 'text-(--text) hover:bg-(--surface) hover:text-(--text-h)',
+            )}
+          >
+            <Activity size={16} />
+            Exercises
+          </Link>
+          <Link
+            to="/gyms"
+            onClick={() => setPanelOpen(false)}
+            className={cn(
+              'flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[14px] transition-colors',
+              pathname.startsWith('/gyms')
+                ? 'bg-(--surface) text-(--accent)'
+                : 'text-(--text) hover:bg-(--surface) hover:text-(--text-h)',
+            )}
+          >
+            <MapPin size={16} />
+            Gyms
+          </Link>
+        </nav>
+
+        {/* sign out */}
+        <div className="border-t border-(--border) px-3 py-3" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-[14px] text-(--text) transition-colors hover:bg-(--surface) hover:text-red-400"
+          >
+            <LogOut size={16} />
+            Sign out
+          </button>
+        </div>
+      </div>
+
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-(--border) bg-(--bg) px-5 py-3.5">
         <Link to="/home"><Logo size={20} /></Link>
 
-        <div ref={menuRef} className="relative">
-          <button
-            onClick={() => menuOpen ? closeMenu() : setMenuOpen(true)}
-            className="relative flex h-8.5 w-8.5 items-center justify-center rounded-[10px] bg-(--surface) text-(--text-muted) transition-colors hover:text-(--text-h)"
-          >
-            <Menu
-              size={18}
-              className={cn(
-                'absolute transition-all duration-150',
-                menuOpen ? 'opacity-0 rotate-90 scale-75' : 'opacity-100 rotate-0 scale-100',
-              )}
-            />
-            <X
-              size={18}
-              className={cn(
-                'absolute transition-all duration-150',
-                menuOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-75',
-              )}
-            />
-          </button>
-
-          {menuOpen && (
-            <div className={`${menuClosing ? 'animate-[dropdown-out_100ms_ease-in]' : 'animate-[dropdown-in_150ms_ease-out]'} absolute right-0 top-full z-50 mt-2 w-52 overflow-hidden rounded-[14px] border border-(--border) bg-(--surface)`}>
-              <div className="border-b border-(--border) px-4 py-2.5">
-                <p className="text-[11px] text-(--text-muted)">Signed in as</p>
-                <p className="text-[13px] font-medium text-(--text-h)">@{user?.username}</p>
-              </div>
-              <Link
-                to="/gyms"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-(--text) transition-colors hover:bg-(--surface-2) hover:text-(--text-h)"
-              >
-                <MapPin size={14} />
-                Gyms
-              </Link>
-              <div className="border-t border-(--border)" />
-              <button
-                onClick={handleLogout}
-                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-[13px] text-(--text) transition-colors hover:bg-(--surface-2) hover:text-(--text-h)"
-              >
-                <LogOut size={14} />
-                Sign out
-              </button>
-            </div>
-          )}
-        </div>
+        <button
+          onClick={() => setPanelOpen(v => !v)}
+          className="relative flex h-8.5 w-8.5 items-center justify-center rounded-[10px] bg-(--surface) text-(--text-muted) transition-colors hover:text-(--text-h)"
+        >
+          <Menu
+            size={18}
+            className={cn(
+              'absolute transition-all duration-150',
+              panelOpen ? 'opacity-0 rotate-90 scale-75' : 'opacity-100 rotate-0 scale-100',
+            )}
+          />
+          <X
+            size={18}
+            className={cn(
+              'absolute transition-all duration-150',
+              panelOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-75',
+            )}
+          />
+        </button>
       </header>
 
       <main className="flex-1 px-5 py-6" style={{ paddingBottom: 'max(112px, calc(112px + env(safe-area-inset-bottom)))' }}>
@@ -243,7 +279,7 @@ export function AppLayout() {
 
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[#1e1e1e] bg-(--bg)">
         <div className="mx-auto flex max-w-150 items-center px-4 pt-4" style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}>
-          <NavItem to="/workouts" label="Workouts" Icon={Dumbbell} />
+          <NavItem to="/home" label="Home" Icon={Home} />
 
           <div className="flex flex-1 justify-center">
             <Link
@@ -254,7 +290,7 @@ export function AppLayout() {
             </Link>
           </div>
 
-          <NavItem to="/exercises" label="Exercises" Icon={Activity} />
+          <NavItem to="/workouts" label="Workouts" Icon={Dumbbell} />
         </div>
       </nav>
     </div>

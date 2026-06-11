@@ -39,6 +39,11 @@ body {
   background: var(--bg);
 }
 
+button, a {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 h1, h2, h3 {
   font-family: var(--sans);
   font-weight: 500;
