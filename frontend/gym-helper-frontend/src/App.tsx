@@ -3,7 +3,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 import { toast } from './lib/toast'
 
-const router = createRouter({ routeTree })
+const router = createRouter({ routeTree, defaultViewTransition: true })
 function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Something went wrong'
 }
