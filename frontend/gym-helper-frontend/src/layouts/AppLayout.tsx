@@ -5,6 +5,7 @@ import { Activity, Dumbbell, LogOut, MapPin, Menu, Plus, X } from 'lucide-react'
 import { cn } from '../lib/cn'
 import { useAuth } from '../hooks/useAuth'
 import { Logo } from '../components/Logo'
+import { ToastStack } from '../components/ToastStack'
 
 
 function NavItem({ to, label, Icon }: { to: string; label: string; Icon: LucideIcon }) {
@@ -61,6 +62,7 @@ export function AppLayout() {
 
   return (
     <div className="flex min-h-svh flex-col text-left">
+      <ToastStack />
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-(--border) bg-(--bg) px-5 py-3.5">
         <Link to="/home"><Logo size={20} /></Link>
 

@@ -97,6 +97,11 @@ select option {
   border-color: rgba(200, 247, 58, 0.22);
 }
 
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50%       { transform: translateY(-12px); }
