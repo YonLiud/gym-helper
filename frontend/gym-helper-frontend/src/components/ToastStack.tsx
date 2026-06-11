@@ -5,7 +5,7 @@ import { toast as toastSingleton, type Toast } from '../lib/toast'
 export function ToastStack() {
   const [toasts, setToasts] = useState<Toast[]>([])
 
-  useEffect(() => toastSingleton.subscribe(setToasts), [])
+  useEffect(() => { const unsub = toastSingleton.subscribe(setToasts); return () => unsub() }, [])
 
   if (toasts.length === 0) return null
 
