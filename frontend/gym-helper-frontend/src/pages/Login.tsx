@@ -68,7 +68,7 @@ export function LoginPage() {
               label="Username"
               type="text"
               value={username}
-              onChange={e => { setUsername(e.target.value); setUsernameError(null) }}
+              onChange={e => { setUsername(e.target.value.toLowerCase()); setUsernameError(null) }}
               error={usernameError ?? undefined}
               autoFocus
             />

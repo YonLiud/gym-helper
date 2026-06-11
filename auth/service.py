@@ -15,6 +15,7 @@ JWT_EXPIRE_MINUTES = 60 * 24
 
 
 async def register_user(username: str, password: str, db: AsyncSession) -> User | None:
+    username = username.lower()
     result = await db.execute(select(User).where(User.username == username))
     if result.scalar_one_or_none():
         return None
@@ -27,6 +28,7 @@ async def register_user(username: str, password: str, db: AsyncSession) -> User 
 
 
 async def authenticate_user(username: str, password: str, db: AsyncSession) -> User | None:
+    username = username.lower()
     result = await db.execute(select(User).where(User.username == username))
     user = result.scalar_one_or_none()
     if not user or not bcrypt.checkpw(password.encode(), user.password_hash.encode()):
