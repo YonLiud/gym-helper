@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import {
   Alert,
+  AuthFooter,
   Badge,
   Button,
   Card,
   EmptyState,
+  FooterLinks,
   Input,
   MuscleGroupBar,
   PageHeader,
@@ -171,6 +173,15 @@ export function ComponentsPreviewPage() {
           { exerciseId: '3', exerciseName: 'Deadlift', muscleGroup: 'Back', weight: 180, reps: 1 },
           { exerciseId: '4', exerciseName: 'Overhead Press', muscleGroup: 'Shoulders', weight: 70, reps: 5 },
         ]} />
+      </Section>
+
+      <Section title="FooterLinks">
+        <FooterLinks />
+      </Section>
+
+      <Section title="AuthFooter">
+        <AuthFooter links={[{ label: '← Home', to: '/' }, { label: 'Register', to: '/register' }]} />
+        <AuthFooter links={[{ label: '← Home', to: '/' }, { label: 'Sign in instead', to: '/login' }]} />
       </Section>
     </div>
   )

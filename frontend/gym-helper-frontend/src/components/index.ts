@@ -1,4 +1,6 @@
 export { Alert } from './Alert'
+export { AuthFooter } from './AuthFooter'
+export { FooterLinks } from './FooterLinks'
 export { ToastStack } from './ToastStack'
 export { Logo } from './Logo'
 export { Badge } from './Badge'
