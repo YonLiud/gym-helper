@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as ComponentsRouteImport } from './routes/components'
@@ -19,6 +20,11 @@ import { Route as ExercisesIndexRouteImport } from './routes/exercises/index'
 import { Route as WorkoutsNewRouteImport } from './routes/workouts/new'
 import { Route as WorkoutsIdRouteImport } from './routes/workouts/$id'
 
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/components': typeof ComponentsRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/workouts/$id': typeof WorkoutsIdRoute
   '/workouts/new': typeof WorkoutsNewRoute
   '/exercises/': typeof ExercisesIndexRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/components': typeof ComponentsRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/workouts/$id': typeof WorkoutsIdRoute
   '/workouts/new': typeof WorkoutsNewRoute
   '/exercises': typeof ExercisesIndexRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/components': typeof ComponentsRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/workouts/$id': typeof WorkoutsIdRoute
   '/workouts/new': typeof WorkoutsNewRoute
   '/exercises/': typeof ExercisesIndexRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/components'
     | '/home'
     | '/login'
+    | '/register'
     | '/workouts/$id'
     | '/workouts/new'
     | '/exercises/'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/components'
     | '/home'
     | '/login'
+    | '/register'
     | '/workouts/$id'
     | '/workouts/new'
     | '/exercises'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/components'
     | '/home'
     | '/login'
+    | '/register'
     | '/workouts/$id'
     | '/workouts/new'
     | '/exercises/'
@@ -140,6 +152,7 @@ export interface RootRouteChildren {
   ComponentsRoute: typeof ComponentsRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
   WorkoutsIdRoute: typeof WorkoutsIdRoute
   WorkoutsNewRoute: typeof WorkoutsNewRoute
   ExercisesIndexRoute: typeof ExercisesIndexRoute
@@ -149,6 +162,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -220,6 +240,7 @@ const rootRouteChildren: RootRouteChildren = {
   ComponentsRoute: ComponentsRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
   WorkoutsIdRoute: WorkoutsIdRoute,
   WorkoutsNewRoute: WorkoutsNewRoute,
   ExercisesIndexRoute: ExercisesIndexRoute,
