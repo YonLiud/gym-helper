@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { ChevronRight, MapPin, Trash2 } from 'lucide-react'
+import { ChevronRight, MapPin, Plus, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Alert, EmptyState, PageHeader, Skeleton, WorkoutCardSkeleton } from '../components'
 import { useExercises } from '../hooks/useExercises'
@@ -163,7 +163,16 @@ export function WorkoutsPage() {
       {sorted.length === 0 ? (
         <EmptyState
           title="No workouts yet"
-          description="Tap the + button to log your first session."
+          description="Log your first session to start tracking progress."
+          action={
+            <Link
+              to="/workouts/new"
+              className="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-4 py-2.5 text-[14px] font-medium text-[#0f0f0f] transition-opacity hover:opacity-90"
+            >
+              <Plus size={16} />
+              Log a workout
+            </Link>
+          }
         />
       ) : (
         <div className="space-y-2">

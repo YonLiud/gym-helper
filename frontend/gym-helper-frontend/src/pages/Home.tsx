@@ -1,4 +1,6 @@
 import { useMemo } from 'react'
+import { Link } from '@tanstack/react-router'
+import { ArrowRight, ChevronRight, Dumbbell, MapPin } from 'lucide-react'
 import { MuscleGroupBar, RecentPRs, Skeleton, StatCard } from '../components'
 import { useAuth } from '../hooks/useAuth'
 import { useWorkoutStats } from '../hooks/useWorkoutStats'
@@ -93,6 +95,40 @@ export function HomePage() {
           </div>
           <Skeleton className="h-40 w-full rounded-[14px]" />
           <Skeleton className="h-48 w-full rounded-[14px]" />
+        </div>
+      ) : daysSinceLastWorkout === null ? (
+        <div className="space-y-3">
+          <p className="text-[14px] text-(--text-muted)">Your dashboard fills up as you train. Start here:</p>
+
+          <Link
+            to="/workouts/new"
+            className="glass flex items-center gap-4 rounded-[18px] p-5 transition-opacity active:opacity-80"
+            style={{ borderColor: 'rgba(200,247,58,0.22)' }}
+          >
+            <div
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px]"
+              style={{ background: 'rgba(200,247,58,0.1)', border: '1px solid rgba(200,247,58,0.2)' }}
+            >
+              <Dumbbell size={22} color="var(--accent)" />
+            </div>
+            <div className="flex-1">
+              <p className="text-[15px] font-semibold text-(--text-h)">Log your first workout</p>
+              <p className="mt-0.5 text-[13px] text-(--text-muted)">Sets, reps, weight — all in one place.</p>
+            </div>
+            <ArrowRight size={18} className="shrink-0 text-(--text-disabled)" />
+          </Link>
+
+          <Link
+            to="/gyms"
+            className="flex items-center gap-3 rounded-[14px] px-4 py-3 text-(--text-muted) transition-colors hover:text-(--text-h)"
+          >
+            <MapPin size={15} className="shrink-0 text-(--text-disabled)" />
+            <span className="flex-1 text-[13px]">
+              Add a gym to tag your sessions
+              <span className="ml-1.5 text-[11px] text-(--text-disabled)">optional</span>
+            </span>
+            <ChevronRight size={15} className="shrink-0 text-(--text-disabled)" />
+          </Link>
         </div>
       ) : (
         <>
