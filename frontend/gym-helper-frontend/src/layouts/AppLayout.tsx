@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
-import { Activity, Dumbbell, Home, LogOut, MapPin, Menu, Plus, X } from 'lucide-react'
+import { Activity, Download, Dumbbell, Home, LogOut, MapPin, Menu, Plus, Share, X } from 'lucide-react'
 import { cn } from '../lib/cn'
 import { useAuth } from '../hooks/useAuth'
 import { Logo } from '../components/Logo'
@@ -131,12 +131,16 @@ function NavItem({ to, label, Icon }: { to: string; label: string; Icon: LucideI
   )
 }
 
+const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent)
+const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
+
 export function AppLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const pathname = useRouterState({ select: s => s.location.pathname })
   const [panelOpen, setPanelOpen] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -145,6 +149,22 @@ export function AppLayout() {
     if (panelOpen) document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [panelOpen])
+
+  useEffect(() => {
+    function onBeforeInstall(e: Event) {
+      e.preventDefault()
+      setInstallPrompt(e as BeforeInstallPromptEvent)
+    }
+    window.addEventListener('beforeinstallprompt', onBeforeInstall)
+    return () => window.removeEventListener('beforeinstallprompt', onBeforeInstall)
+  }, [])
+
+  async function handleInstall() {
+    if (!installPrompt) return
+    await installPrompt.prompt()
+    const { outcome } = await installPrompt.userChoice
+    if (outcome === 'accepted') setInstallPrompt(null)
+  }
 
   async function handleLogout() {
     await logout()
@@ -235,8 +255,25 @@ export function AppLayout() {
           </Link>
         </nav>
 
-        {/* sign out */}
-        <div className="border-t border-(--border) px-3 py-3" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
+        {/* install + sign out */}
+        <div className="border-t border-(--border) px-3 py-3 space-y-0.5" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
+          {!isInStandaloneMode && installPrompt && (
+            <button
+              onClick={handleInstall}
+              className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-[14px] text-(--text) transition-colors hover:bg-(--surface) hover:text-(--text-h)"
+            >
+              <Download size={16} />
+              Install app
+            </button>
+          )}
+          {!isInStandaloneMode && isIos && (
+            <div className="flex items-start gap-3 rounded-[10px] px-3 py-2.5 text-[14px] text-(--text-muted)">
+              <Share size={16} className="mt-0.5 shrink-0" />
+              <span className="text-[13px] leading-snug">
+                Tap <span className="text-(--text)">Share</span> then <span className="text-(--text)">Add to Home Screen</span> to install
+              </span>
+            </div>
+          )}
           <button
             onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-[14px] text-(--text) transition-colors hover:bg-(--surface) hover:text-red-400"
