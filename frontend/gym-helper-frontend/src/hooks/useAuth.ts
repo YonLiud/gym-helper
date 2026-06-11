@@ -21,10 +21,10 @@ export function useAuth() {
   }
 
   async function logout() {
-    await api.post('/auth/logout', {})
     localStorage.removeItem(STORAGE_KEY)
     setUser(null)
     queryClient.clear()
+    await api.post('/auth/logout', {})
   }
 
   return { user, login, logout, isAuthenticated: !!user }

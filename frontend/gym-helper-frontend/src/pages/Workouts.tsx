@@ -47,7 +47,7 @@ function WorkoutCard({
   }
 
   return (
-    <div className="flex items-center rounded-[14px] border border-(--border) bg-(--surface) transition-colors hover:border-(--accent-border)">
+    <div className="glass glass-interactive flex items-center rounded-[14px]">
       <Link
         to="/workouts/$id"
         params={{ id: workout.id }}

@@ -51,7 +51,7 @@ export function MuscleGroupBar({ groups }: MuscleGroupBarProps) {
   const top1 = slices[0]
 
   return (
-    <div className="rounded-[14px] bg-(--surface) px-4 py-4">
+    <div className="glass rounded-[14px] px-4 py-4">
       <p className="mb-3 text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">
         Muscle focus
       </p>

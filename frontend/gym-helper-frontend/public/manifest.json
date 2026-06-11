@@ -1,7 +1,7 @@
 {
   "name": "Gym Helper",
   "short_name": "Gym Helper",
-  "description": "Personal gym performance tracker",
+  "description": "Track every rep. Own every PR.",
   "start_url": "/workouts",
   "display": "standalone",
   "background_color": "#1c1c1c",

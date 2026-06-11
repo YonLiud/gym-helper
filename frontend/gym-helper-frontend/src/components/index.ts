@@ -1,4 +1,6 @@
 export { Alert } from './Alert'
+export { ToastStack } from './ToastStack'
+export { Logo } from './Logo'
 export { Badge } from './Badge'
 export { Button } from './Button'
 export { Card } from './Card'
