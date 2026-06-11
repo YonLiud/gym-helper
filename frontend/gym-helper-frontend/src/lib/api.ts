@@ -12,6 +12,7 @@ async function request<T>(method: string, path: string, body?: unknown, signal?:
   if (res.status === 401) {
     const err = await res.json().catch(() => ({ detail: 'Unauthorized' }))
     if (window.location.pathname !== '/login') {
+      localStorage.removeItem('gym_user')
       window.location.href = '/login'
     }
     throw new Error(err.detail ?? 'Unauthorized')
