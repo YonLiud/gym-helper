@@ -1,10 +1,8 @@
 import { MapPin, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
-import { Alert, Button, GymCardSkeleton, Skeleton } from '../components'
+import { Alert, Button, GymCardSkeleton, Input, Skeleton } from '../components'
 import { useGyms } from '../hooks/useGyms'
 import type { Gym, GymInput } from '../types'
-
-const inputClass = 'w-full rounded-[10px] border border-(--border) bg-(--code-bg) px-4 py-3 text-[14px] text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors'
 
 function AddGymForm({ onAdd }: { onAdd: (input: GymInput) => Promise<void> }) {
   const [name, setName] = useState('')
@@ -33,9 +31,9 @@ function AddGymForm({ onAdd }: { onAdd: (input: GymInput) => Promise<void> }) {
     <form onSubmit={handleSubmit} className="glass space-y-3 rounded-[14px] p-4">
       <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">Add gym</p>
       {error && <Alert variant="error">{error}</Alert>}
-      <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required className={inputClass} />
-      <input type="text" placeholder="Location" value={location} onChange={e => setLocation(e.target.value)} required className={inputClass} />
-      <input type="text" placeholder="Notes (optional)" value={notes} onChange={e => setNotes(e.target.value)} className={inputClass} />
+      <Input placeholder="Name" value={name} onChange={e => setName(e.target.value)} required className="bg-(--code-bg)" />
+      <Input placeholder="Location" value={location} onChange={e => setLocation(e.target.value)} required className="bg-(--code-bg)" />
+      <Input placeholder="Notes (optional)" value={notes} onChange={e => setNotes(e.target.value)} className="bg-(--code-bg)" />
       <Button type="submit" variant="secondary" className="w-full" loading={submitting} disabled={!name.trim() || !location.trim()}>
         <Plus size={16} />
         Add
@@ -86,9 +84,9 @@ function GymCard({
     return (
       <form onSubmit={handleSave} className="glass space-y-2.5 rounded-[14px] p-4" style={{ borderColor: 'rgba(200,247,58,0.22)' }}>
         {error && <Alert variant="error">{error}</Alert>}
-        <input type="text" value={name} onChange={e => setName(e.target.value)} required autoFocus className={inputClass} />
-        <input type="text" value={location} onChange={e => setLocation(e.target.value)} required className={inputClass} />
-        <input type="text" placeholder="Notes (optional)" value={notes} onChange={e => setNotes(e.target.value)} className={inputClass} />
+        <Input value={name} onChange={e => setName(e.target.value)} required autoFocus className="bg-(--code-bg)" />
+        <Input value={location} onChange={e => setLocation(e.target.value)} required className="bg-(--code-bg)" />
+        <Input placeholder="Notes (optional)" value={notes} onChange={e => setNotes(e.target.value)} className="bg-(--code-bg)" />
         <div className="flex gap-2">
           <Button type="submit" size="sm" className="flex-1" loading={saving} disabled={!name.trim() || !location.trim()}>
             Save

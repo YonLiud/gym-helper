@@ -1,7 +1,8 @@
 import { useNavigate } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { Activity, ArrowLeft } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Alert, Button, Input, Select } from '../components'
+import { Alert, Button, CTACard, Input, Select } from '../components'
+import { useExercises } from '../hooks/useExercises'
 import { useGyms } from '../hooks/useGyms'
 import { useWorkouts } from '../hooks/useWorkouts'
 
@@ -21,6 +22,7 @@ export function WorkoutNewPage() {
   const navigate = useNavigate()
   const { gyms, loading: loadingGyms } = useGyms()
   const { workouts, loading: loadingWorkouts, createWorkout } = useWorkouts()
+  const { exercises, loading: loadingExercises } = useExercises()
 
   const [gymId, setGymId] = useState('')
   const [title, setTitle] = useState(todayTitle())
@@ -52,8 +54,9 @@ export function WorkoutNewPage() {
     }
   }
 
-  const loading = loadingGyms || loadingWorkouts
+  const loading = loadingGyms || loadingWorkouts || loadingExercises
   const gymOptions = gyms.map(g => ({ value: g.id, label: g.name }))
+  const noExercises = !loadingExercises && exercises.length === 0
 
   return (
     <div className="mx-auto max-w-lg">
@@ -66,6 +69,16 @@ export function WorkoutNewPage() {
         </button>
         <h2>New Workout</h2>
       </div>
+
+      {noExercises && (
+        <CTACard
+          to="/exercises"
+          icon={<Activity size={22} color="var(--accent)" />}
+          title="Add exercises first"
+          description="You need at least one exercise to log sets."
+          className="mb-4"
+        />
+      )}
 
       {error && <Alert variant="error" className="mb-4">{error}</Alert>}
 
@@ -91,7 +104,7 @@ export function WorkoutNewPage() {
           size="lg"
           className="w-full"
           loading={submitting}
-          disabled={loading}
+          disabled={loading || noExercises}
         >
           Start Workout
         </Button>

@@ -156,10 +156,11 @@ function ExercisePicker({
 
 // ── Set row ───────────────────────────────────────────────────────────────────
 
-function SetRow({ set, onDelete }: { set: WorkoutSet; onDelete: () => void }) {
+function SetRow({ set, index, onDelete }: { set: WorkoutSet; index: number; onDelete: () => void }) {
   return (
     <div className="flex items-center gap-3 rounded-[10px] bg-(--code-bg) px-4 py-2.5">
-      <span className="flex-1 text-[14px] text-(--text-h)">
+      <span className="w-5 shrink-0 text-[11px] font-medium text-(--text-disabled)">{index + 1}</span>
+      <span className="flex-1 text-[14px] font-medium text-(--text-h)">
         {set.weight != null ? `${set.weight} kg` : 'BW'}
         {set.reps != null && <span className="text-(--text-muted)"> × {set.reps}</span>}
       </span>
@@ -393,8 +394,8 @@ export function WorkoutDetailPage() {
           <>
             {/* Previous performance */}
             {prevPerformance ? (
-              <div className="rounded-[14px] border border-(--border) bg-(--surface) p-4">
-                <p className="mb-2.5 text-[11px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">
+              <div className="rounded-[14px] p-4" style={{ background: 'rgba(200,247,58,0.04)', border: '1px solid rgba(200,247,58,0.12)' }}>
+                <p className="mb-2.5 text-[11px] font-medium uppercase tracking-[0.08em]" style={{ color: 'rgba(200,247,58,0.6)' }}>
                   Last time · {fmtDate(prevPerformance.date)}
                 </p>
                 <div className="space-y-1.5">
@@ -417,8 +418,8 @@ export function WorkoutDetailPage() {
             {currentExerciseSets.length > 0 && (
               <div className="space-y-2">
                 <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">This session</p>
-                {currentExerciseSets.map(s => (
-                  <SetRow key={s.id} set={s} onDelete={() => deleteSet(s.id)} />
+                {currentExerciseSets.map((s, i) => (
+                  <SetRow key={s.id} set={s} index={i} onDelete={() => deleteSet(s.id)} />
                 ))}
               </div>
             )}
@@ -521,7 +522,7 @@ export function WorkoutDetailPage() {
       ) : (
         <div className="space-y-3">
           {exerciseGroups.map(({ exId, name, sets }) => (
-            <div key={exId} className="rounded-[14px] border border-(--border) bg-(--surface) overflow-hidden">
+            <div key={exId} className="glass overflow-hidden rounded-[14px]">
               {reassigningGroup === exId ? (
                 <div className="space-y-3 p-4">
                   <div className="flex items-center justify-between">
@@ -559,11 +560,11 @@ export function WorkoutDetailPage() {
                   </div>
                   <div className="space-y-1.5">
                     {sets.map((s, i) => (
-                      <div key={s.id} className="flex items-center justify-between text-[13px]">
-                        <span className="text-(--text-muted)">Set {i + 1}</span>
-                        <span className="text-(--text-h)">
+                      <div key={s.id} className="flex items-center gap-3 rounded-lg bg-(--code-bg) px-3 py-2 text-[13px]">
+                        <span className="w-4 shrink-0 text-[11px] font-medium text-(--text-disabled)">{i + 1}</span>
+                        <span className="flex-1 font-medium text-(--text-h)">
                           {s.weight != null ? `${s.weight} kg` : 'BW'}
-                          {s.reps != null && ` × ${s.reps}`}
+                          <span className="text-(--text-muted)">{s.reps != null && ` × ${s.reps}`}</span>
                         </span>
                       </div>
                     ))}

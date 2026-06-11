@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Activity, BarChart3, ChevronDown, Dumbbell, ArrowRight, Trophy, Github, Globe } from 'lucide-react'
+import { Activity, BarChart3, ChevronDown, Dumbbell, ArrowRight, Trophy } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { FooterLinks } from '../components/FooterLinks'
+import { Logo } from '../components/Logo'
 import { StatCard } from '../components/StatCard'
 import { MuscleGroupBar } from '../components/MuscleGroupBar'
 import { RecentPRs } from '../components/RecentPRs'
@@ -218,6 +220,44 @@ const FEATURES = [
   },
 ]
 
+function LandingNav() {
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  return (
+    <nav
+      className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-4 transition-all duration-300"
+      style={scrolled ? {
+        background: 'rgba(28,28,28,0.7)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+      } : {}}
+    >
+      <Link to="/"><Logo size={20} /></Link>
+      <div className="flex items-center gap-2">
+        <Link
+          to="/register"
+          className="rounded-[10px] px-4 py-2 text-[13px] text-(--text-muted) transition-colors hover:text-(--text-h)"
+        >
+          Register
+        </Link>
+        <Link
+          to="/login"
+          className="rounded-[10px] bg-(--surface) px-4 py-2 text-[13px] font-medium text-(--text-h) transition-all duration-150 hover:bg-(--surface-2)"
+          style={{ border: '1px solid var(--border)' }}
+        >
+          Sign in
+        </Link>
+      </div>
+    </nav>
+  )
+}
+
 export function LandingPage() {
   const [loaded, setLoaded] = useState(false)
   useEffect(() => { const t = setTimeout(() => setLoaded(true), 60); return () => clearTimeout(t) }, [])
@@ -230,6 +270,7 @@ export function LandingPage() {
 
   return (
     <div className="relative overflow-x-hidden">
+      <LandingNav />
       <ScrollStar />
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
@@ -349,7 +390,7 @@ export function LandingPage() {
             <span className="h-3 w-3 rounded-full bg-[#3a3a3a]" />
             <span className="h-3 w-3 rounded-full bg-[#3a3a3a]" />
             <span className="h-3 w-3 rounded-full bg-[#3a3a3a]" />
-            <span className="ml-3 text-[11px] font-medium text-(--text-disabled)">gym helper — home</span>
+            <span className="ml-3 text-[11px] font-medium text-(--text-disabled)">Gym Helper — home</span>
           </div>
 
           <FadeUp>
@@ -404,26 +445,7 @@ export function LandingPage() {
 
       {/* ── Footer ────────────────────────────────────────────────────────── */}
       <footer className="border-t border-(--border) px-6 py-8">
-        <div className="flex items-center justify-center gap-3">
-          <a
-            href="https://yxnliu.net"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-[10px] border border-(--border) px-4 py-2 text-[13px] text-(--text-muted) transition-all duration-150 hover:border-(--accent-border) hover:text-(--text-h)"
-          >
-            <Globe size={13} />
-            yxnliu.net
-          </a>
-          <a
-            href="https://github.com/YonLiud/gym-helper"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-[10px] border border-(--border) px-4 py-2 text-[13px] text-(--text-muted) transition-all duration-150 hover:border-(--accent-border) hover:text-(--text-h)"
-          >
-            <Github size={13} />
-            GitHub
-          </a>
-        </div>
+        <FooterLinks />
       </footer>
     </div>
   )

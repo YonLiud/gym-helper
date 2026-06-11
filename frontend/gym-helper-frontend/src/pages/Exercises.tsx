@@ -1,10 +1,21 @@
-import { ChevronDown, ChevronUp, Plus, Sparkles, Trash2 } from 'lucide-react'
+import { ChevronUp, Plus, Sparkles, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { Alert, Button, ExerciseGroupSkeleton, Select, Skeleton } from '../components'
+import { Alert, Button, CTACard, ExerciseGroupSkeleton, HintRow, Input, Select, Skeleton } from '../components'
 import { useExercises } from '../hooks/useExercises'
 import type { ExerciseInput } from '../types'
 
 const MUSCLE_GROUPS = ['chest', 'back', 'shoulders', 'legs', 'biceps', 'triceps', 'core']
+
+const MUSCLE_COLORS: Record<string, string> = {
+  chest:     '#f87171',
+  back:      '#60a5fa',
+  shoulders: '#fb923c',
+  legs:      '#a78bfa',
+  biceps:    '#34d399',
+  triceps:   '#c8f73a',
+  core:      '#fbbf24',
+  other:     '#6b7280',
+}
 const EQUIPMENT_TYPES = ['barbell', 'dumbbell', 'cable', 'machine', 'bodyweight', 'other']
 
 function capitalize(s: string) {
@@ -53,13 +64,12 @@ function AddExerciseForm({
     <form onSubmit={handleSubmit} className="space-y-3 rounded-[14px] border border-(--border) bg-(--surface) p-4">
       <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">Add exercise</p>
       {error && <Alert variant="error">{error}</Alert>}
-      <input
-        type="text"
+      <Input
         placeholder="Exercise name"
         value={name}
         onChange={e => setName(e.target.value)}
         required
-        className="w-full rounded-[10px] border border-(--border) bg-(--code-bg) px-4 py-3 text-[14px] text-(--text-h) placeholder:text-(--text-hint) focus:border-(--accent) focus:outline-none transition-colors"
+        className="bg-(--code-bg)"
       />
       <div className="flex gap-3">
         <Select
@@ -180,12 +190,23 @@ export function ExercisesPage() {
       )}
 
       {exercises.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 py-16 text-center">
-          <p className="text-[13px] text-(--text-muted)">No exercises yet.</p>
-          <Button variant="secondary" onClick={handleSeedDefaults} loading={seeding}>
-            <Sparkles size={16} />
-            Load defaults
-          </Button>
+        <div className="space-y-3">
+          <p className="text-[14px] text-(--text-muted)">Add exercises to your catalog to start logging sets.</p>
+
+          <CTACard
+            onClick={handleSeedDefaults}
+            disabled={seeding}
+            icon={<Sparkles size={22} color="var(--accent)" />}
+            title={seeding ? 'Loading…' : 'Load default exercises'}
+            description="A curated set of common exercises across all muscle groups."
+          />
+
+          <HintRow
+            onClick={() => setShowForm(v => !v)}
+            Icon={Plus}
+            label="Add exercises manually"
+            open={showForm}
+          />
         </div>
       ) : (
         <>
@@ -193,13 +214,16 @@ export function ExercisesPage() {
             {groups.map(([group, exs]) => {
               const collapsed = collapsedGroups.has(group)
               return (
-                <div key={group} className="rounded-[14px] border border-(--border) bg-(--surface) overflow-hidden">
+                <div key={group} className="glass overflow-hidden rounded-[14px]">
                   <button
                     onClick={() => toggleGroup(group)}
-                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-(--code-bg)"
+                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-white/3"
                   >
-                    <span className="text-[13px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">{capitalize(group)}</span>
-                    <span className="flex items-center gap-2 text-[12px] text-(--text-muted)">
+                    <span className="flex items-center gap-2.5">
+                      <span className="h-2 w-2 rounded-full shrink-0" style={{ background: MUSCLE_COLORS[group] ?? MUSCLE_COLORS.other }} />
+                      <span className="text-[13px] font-medium uppercase tracking-[0.08em] text-(--text-muted)">{capitalize(group)}</span>
+                    </span>
+                    <span className="flex items-center gap-2 text-[12px] text-(--text-disabled)">
                       {exs.length}
                       {collapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
                     </span>

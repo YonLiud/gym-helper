@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { ChevronRight, MapPin, Trash2 } from 'lucide-react'
+import { ChevronRight, MapPin, Plus, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Alert, EmptyState, PageHeader, Skeleton, WorkoutCardSkeleton } from '../components'
 import { useExercises } from '../hooks/useExercises'
@@ -53,9 +53,14 @@ function WorkoutCard({
         params={{ id: workout.id }}
         className="flex flex-1 items-center gap-4 px-4 py-3.5 min-w-0 active:scale-[0.99]"
       >
-        <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-[10px] bg-(--code-bg) py-2.5 text-center">
-          <span className="text-[15px] font-medium leading-tight text-(--text-h)">{main}</span>
-          {sub && <span className="mt-0.5 text-[11px] text-(--text-muted)">{sub}</span>}
+        <div
+          className="flex w-14 shrink-0 flex-col items-center justify-center rounded-[10px] py-2.5 text-center"
+          style={sub === 'Today'
+            ? { background: 'rgba(200,247,58,0.1)', border: '1px solid rgba(200,247,58,0.2)' }
+            : { background: 'var(--code-bg)' }}
+        >
+          <span className="text-[15px] font-medium leading-tight" style={{ color: sub === 'Today' ? 'var(--accent)' : 'var(--text-h)' }}>{main}</span>
+          {sub && <span className="mt-0.5 text-[11px]" style={{ color: sub === 'Today' ? 'var(--accent)' : 'var(--text-muted)' }}>{sub}</span>}
         </div>
 
         <div className="min-w-0 flex-1">
@@ -158,7 +163,16 @@ export function WorkoutsPage() {
       {sorted.length === 0 ? (
         <EmptyState
           title="No workouts yet"
-          description="Tap the + button to log your first session."
+          description="Log your first session to start tracking progress."
+          action={
+            <Link
+              to="/workouts/new"
+              className="inline-flex items-center gap-2 rounded-xl bg-(--accent) px-4 py-2.5 text-[14px] font-medium text-[#0f0f0f] transition-opacity hover:opacity-90"
+            >
+              <Plus size={16} />
+              Log a workout
+            </Link>
+          }
         />
       ) : (
         <div className="space-y-2">

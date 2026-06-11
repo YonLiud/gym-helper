@@ -40,7 +40,7 @@
     <rect x="80" y="54" width="46" height="46" rx="10" fill="#272727"/>
     <rect x="80" y="54" width="46" height="46" rx="10" fill="rgba(200,247,58,0.08)"/>
     <text x="103" y="77" font-family="Inter, system-ui, sans-serif" font-size="19" font-weight="800" fill="#c8f73a" text-anchor="middle" dominant-baseline="central" letter-spacing="-0.5">GH</text>
-    <text x="137" y="77" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="600" fill="#f0f0f0" dominant-baseline="central" letter-spacing="-0.3">gym helper</text>
+    <text x="137" y="77" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="600" fill="#f0f0f0" dominant-baseline="central" letter-spacing="-0.3">Gym Helper</text>
 
     <!-- headline -->
     <text x="80" y="218" font-family="Inter, system-ui, sans-serif" font-size="84" font-weight="900" fill="#f0f0f0"  letter-spacing="-3.5">Every rep.</text>
