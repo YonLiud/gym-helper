@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, ChevronRight, Dumbbell, MapPin } from 'lucide-react'
+import { Activity, ArrowRight, ChevronRight, Dumbbell, MapPin } from 'lucide-react'
 import { MuscleGroupBar, RecentPRs, Skeleton, StatCard } from '../components'
 import { useAuth } from '../hooks/useAuth'
 import { useWorkoutStats } from '../hooks/useWorkoutStats'
@@ -118,6 +118,18 @@ export function HomePage() {
             <ArrowRight size={18} className="shrink-0 text-(--text-disabled)" />
           </Link>
 
+          <Link
+            to="/exercises"
+            className="flex items-center gap-3 rounded-[14px] px-4 py-3 text-(--text-muted) transition-colors hover:text-(--text-h)"
+          >
+            <Activity size={15} className="shrink-0 text-(--text-disabled)" />
+            <span className="flex-1 text-[13px]">
+              Build your exercise catalog
+              <span className="ml-1.5 text-[11px] text-(--text-disabled)">needed to log sets</span>
+            </span>
+            <ChevronRight size={15} className="shrink-0 text-(--text-disabled)" />
+          </Link>
+          
           <Link
             to="/gyms"
             className="flex items-center gap-3 rounded-[14px] px-4 py-3 text-(--text-muted) transition-colors hover:text-(--text-h)"
