@@ -8,7 +8,7 @@ export function RecentPRs({ prs }: RecentPRsProps) {
   if (prs.length === 0) return null
 
   return (
-    <div className="rounded-[14px] bg-(--surface) px-4 py-4">
+    <div className="glass rounded-[14px] px-4 py-4">
       <p className="mb-3 text-[11px] font-medium uppercase tracking-wider text-(--text-muted)">Personal bests</p>
       <div className="space-y-3">
         {prs.map(pr => (

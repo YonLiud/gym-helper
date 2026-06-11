@@ -30,7 +30,7 @@ function AddGymForm({ onAdd }: { onAdd: (input: GymInput) => Promise<void> }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 rounded-[14px] border border-(--border) bg-(--surface) p-4">
+    <form onSubmit={handleSubmit} className="glass space-y-3 rounded-[14px] p-4">
       <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">Add gym</p>
       {error && <Alert variant="error">{error}</Alert>}
       <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required className={inputClass} />
@@ -84,7 +84,7 @@ function GymCard({
 
   if (editing) {
     return (
-      <form onSubmit={handleSave} className="space-y-2.5 rounded-[14px] border border-(--accent-border) bg-(--surface) p-4">
+      <form onSubmit={handleSave} className="glass space-y-2.5 rounded-[14px] p-4" style={{ borderColor: 'rgba(200,247,58,0.22)' }}>
         {error && <Alert variant="error">{error}</Alert>}
         <input type="text" value={name} onChange={e => setName(e.target.value)} required autoFocus className={inputClass} />
         <input type="text" value={location} onChange={e => setLocation(e.target.value)} required className={inputClass} />
@@ -102,7 +102,7 @@ function GymCard({
   }
 
   return (
-    <div className="flex items-start gap-3 rounded-[14px] border border-(--border) bg-(--surface) p-4">
+    <div className="glass flex items-start gap-3 rounded-[14px] p-4">
       <MapPin size={15} className="mt-0.5 shrink-0 text-(--accent)" />
       <div className="min-w-0 flex-1">
         <p className="text-[14px] font-medium text-(--text-h)">{gym.name}</p>
