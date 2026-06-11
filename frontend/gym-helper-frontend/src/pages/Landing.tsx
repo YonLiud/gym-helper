@@ -340,7 +340,7 @@ export function LandingPage() {
           {/* CTA */}
           <div style={{ ...s(320), marginTop: 44 }}>
             <Link
-              to="/login"
+              to="/register"
               className="group inline-flex items-center gap-2.5 rounded-[14px] bg-(--accent) px-8 py-4 text-[15px] font-bold text-[#0f0f0f] transition-all duration-200 hover:scale-[1.04] active:scale-[0.97]"
               style={{ boxShadow: '0 4px 28px rgba(200,247,58,0.35)' }}
             >
@@ -431,7 +431,7 @@ export function LandingPage() {
             </p>
             <div className="mt-10">
               <Link
-                to="/login"
+                to="/register"
                 className="group inline-flex items-center gap-2.5 rounded-[14px] bg-(--accent) px-8 py-4 text-[16px] font-bold text-[#0f0f0f] transition-all duration-200 hover:scale-[1.04] active:scale-[0.97]"
                 style={{ boxShadow: '0 4px 36px rgba(200,247,58,0.4)' }}
               >
