@@ -53,6 +53,21 @@ function formatLastSession(days: number | null): { value: string; sub: string } 
   return { value: String(days), sub: 'days ago' }
 }
 
+function GreetingHeading({ text, username }: { text: string; username: string }) {
+  const displayName = username.charAt(0).toUpperCase() + username.slice(1)
+  const idx = text.lastIndexOf(displayName)
+  if (idx === -1) return (
+    <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.4px', lineHeight: 1.15 }}>{text}</h1>
+  )
+  return (
+    <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.4px', lineHeight: 1.15 }}>
+      {text.slice(0, idx)}
+      <span style={{ color: 'var(--accent)' }}>{displayName}</span>
+      {text.slice(idx + displayName.length)}
+    </h1>
+  )
+}
+
 export function HomePage() {
   const { user } = useAuth()
   const greeting = useMemo(() => user ? getGreeting(user.username) : null, [user?.username])
@@ -62,10 +77,8 @@ export function HomePage() {
 
   return (
     <div className="space-y-6">
-      {greeting && (
-        <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.4px', lineHeight: 1.15 }}>
-          {greeting}
-        </h1>
+      {greeting && user && (
+        <GreetingHeading text={greeting} username={user.username} />
       )}
 
       {loading ? (
@@ -84,26 +97,10 @@ export function HomePage() {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatCard
-              label="This week"
-              value={thisWeek}
-              sub={thisWeek === 1 ? 'workout' : 'workouts'}
-            />
-            <StatCard
-              label="Streak"
-              value={streak}
-              sub={streak === 1 ? 'week' : 'weeks'}
-            />
-            <StatCard
-              label="Volume"
-              value={formatVolume(volumeThisWeek)}
-              sub={volumeThisWeek > 0 ? 'kg this week' : undefined}
-            />
-            <StatCard
-              label="Last session"
-              value={lastSession.value}
-              sub={lastSession.sub}
-            />
+            <StatCard label="This week"    value={thisWeek}                 sub={thisWeek === 1 ? 'workout' : 'workouts'} />
+            <StatCard label="Streak"       value={streak}                   sub={streak === 1 ? 'week' : 'weeks'} />
+            <StatCard label="Volume"       value={formatVolume(volumeThisWeek)} sub={volumeThisWeek > 0 ? 'kg this week' : undefined} />
+            <StatCard label="Last session" value={lastSession.value}        sub={lastSession.sub} />
           </div>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

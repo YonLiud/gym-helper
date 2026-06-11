@@ -5,6 +5,17 @@ import { useExercises } from '../hooks/useExercises'
 import type { ExerciseInput } from '../types'
 
 const MUSCLE_GROUPS = ['chest', 'back', 'shoulders', 'legs', 'biceps', 'triceps', 'core']
+
+const MUSCLE_COLORS: Record<string, string> = {
+  chest:     '#f87171',
+  back:      '#60a5fa',
+  shoulders: '#fb923c',
+  legs:      '#a78bfa',
+  biceps:    '#34d399',
+  triceps:   '#c8f73a',
+  core:      '#fbbf24',
+  other:     '#6b7280',
+}
 const EQUIPMENT_TYPES = ['barbell', 'dumbbell', 'cable', 'machine', 'bodyweight', 'other']
 
 function capitalize(s: string) {
@@ -193,13 +204,16 @@ export function ExercisesPage() {
             {groups.map(([group, exs]) => {
               const collapsed = collapsedGroups.has(group)
               return (
-                <div key={group} className="rounded-[14px] border border-(--border) bg-(--surface) overflow-hidden">
+                <div key={group} className="glass overflow-hidden rounded-[14px]">
                   <button
                     onClick={() => toggleGroup(group)}
-                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-(--code-bg)"
+                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-white/3"
                   >
-                    <span className="text-[13px] font-medium uppercase tracking-[0.08em] text-(--text-disabled)">{capitalize(group)}</span>
-                    <span className="flex items-center gap-2 text-[12px] text-(--text-muted)">
+                    <span className="flex items-center gap-2.5">
+                      <span className="h-2 w-2 rounded-full shrink-0" style={{ background: MUSCLE_COLORS[group] ?? MUSCLE_COLORS.other }} />
+                      <span className="text-[13px] font-medium uppercase tracking-[0.08em] text-(--text-muted)">{capitalize(group)}</span>
+                    </span>
+                    <span className="flex items-center gap-2 text-[12px] text-(--text-disabled)">
                       {exs.length}
                       {collapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
                     </span>

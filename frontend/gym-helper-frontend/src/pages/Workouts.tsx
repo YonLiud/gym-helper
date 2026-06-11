@@ -53,9 +53,14 @@ function WorkoutCard({
         params={{ id: workout.id }}
         className="flex flex-1 items-center gap-4 px-4 py-3.5 min-w-0 active:scale-[0.99]"
       >
-        <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-[10px] bg-(--code-bg) py-2.5 text-center">
-          <span className="text-[15px] font-medium leading-tight text-(--text-h)">{main}</span>
-          {sub && <span className="mt-0.5 text-[11px] text-(--text-muted)">{sub}</span>}
+        <div
+          className="flex w-14 shrink-0 flex-col items-center justify-center rounded-[10px] py-2.5 text-center"
+          style={sub === 'Today'
+            ? { background: 'rgba(200,247,58,0.1)', border: '1px solid rgba(200,247,58,0.2)' }
+            : { background: 'var(--code-bg)' }}
+        >
+          <span className="text-[15px] font-medium leading-tight" style={{ color: sub === 'Today' ? 'var(--accent)' : 'var(--text-h)' }}>{main}</span>
+          {sub && <span className="mt-0.5 text-[11px]" style={{ color: sub === 'Today' ? 'var(--accent)' : 'var(--text-muted)' }}>{sub}</span>}
         </div>
 
         <div className="min-w-0 flex-1">
