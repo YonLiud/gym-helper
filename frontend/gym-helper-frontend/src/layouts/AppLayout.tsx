@@ -7,6 +7,11 @@ import { useAuth } from '../hooks/useAuth'
 import { Logo } from '../components/Logo'
 import { ToastStack } from '../components/ToastStack'
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>
+  readonly userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
+
 // ── Background particles ──────────────────────────────────────────────────────
 
 interface Particle {
@@ -309,9 +314,7 @@ export function AppLayout() {
       </header>
 
       <main className="flex-1 px-5 py-6" style={{ paddingBottom: 'max(112px, calc(112px + env(safe-area-inset-bottom)))' }}>
-        <div key={pathname} className="animate-[page-in_220ms_ease-out]">
-          <Outlet />
-        </div>
+        <Outlet />
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[#1e1e1e] bg-(--bg)">
