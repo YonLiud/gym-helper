@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Activity, BarChart3, ChevronDown, Dumbbell, ArrowRight, Trophy } from 'lucide-react'
+import { Activity, BarChart3, ChevronDown, Dumbbell, ArrowRight, Trophy, Github, Globe } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { StatCard } from '../components/StatCard'
 import { MuscleGroupBar } from '../components/MuscleGroupBar'
@@ -401,6 +401,30 @@ export function LandingPage() {
           </div>
         </FadeUp>
       </section>
+
+      {/* ── Footer ────────────────────────────────────────────────────────── */}
+      <footer className="border-t border-(--border) px-6 py-8">
+        <div className="flex items-center justify-center gap-3">
+          <a
+            href="https://yxnliu.net"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-[10px] border border-(--border) px-4 py-2 text-[13px] text-(--text-muted) transition-all duration-150 hover:border-(--accent-border) hover:text-(--text-h)"
+          >
+            <Globe size={13} />
+            yxnliu.net
+          </a>
+          <a
+            href="https://github.com/YonLiud/gym-helper"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-[10px] border border-(--border) px-4 py-2 text-[13px] text-(--text-muted) transition-all duration-150 hover:border-(--accent-border) hover:text-(--text-h)"
+          >
+            <Github size={13} />
+            GitHub
+          </a>
+        </div>
+      </footer>
     </div>
   )
 }
