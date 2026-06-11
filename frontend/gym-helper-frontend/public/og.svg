@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <filter id="blur-xl" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="70"/>
+    </filter>
+    <filter id="blur-md" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="30"/>
+    </filter>
+    <filter id="blur-sm" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.06)"/>
+    </pattern>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="65%">
+      <stop offset="0%"   stop-color="transparent"/>
+      <stop offset="100%" stop-color="#1c1c1c"/>
+    </radialGradient>
+    <clipPath id="canvas">
+      <rect width="1200" height="630"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#canvas)">
+    <!-- base bg -->
+    <rect width="1200" height="630" fill="#1c1c1c"/>
+    <rect width="1200" height="630" fill="url(#dots)"/>
+
+    <!-- ambient glows -->
+    <ellipse cx="950" cy="350" rx="360" ry="250" fill="rgba(200,247,58,0.13)" filter="url(#blur-xl)"/>
+    <ellipse cx="160" cy="120" rx="220" ry="160" fill="rgba(200,247,58,0.07)" filter="url(#blur-xl)"/>
+    <ellipse cx="680" cy="620" rx="300" ry="120" fill="rgba(200,247,58,0.05)" filter="url(#blur-xl)"/>
+
+    <!-- vignette -->
+    <rect width="1200" height="630" fill="url(#vignette)"/>
+
+    <!-- ── LEFT: text content ── -->
+
+    <!-- GH logo mark -->
+    <rect x="80" y="54" width="46" height="46" rx="10" fill="#272727"/>
+    <rect x="80" y="54" width="46" height="46" rx="10" fill="rgba(200,247,58,0.08)"/>
+    <text x="103" y="77" font-family="Inter, system-ui, sans-serif" font-size="19" font-weight="800" fill="#c8f73a" text-anchor="middle" dominant-baseline="central" letter-spacing="-0.5">GH</text>
+    <text x="137" y="77" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="600" fill="#f0f0f0" dominant-baseline="central" letter-spacing="-0.3">gym helper</text>
+
+    <!-- headline -->
+    <text x="80" y="218" font-family="Inter, system-ui, sans-serif" font-size="84" font-weight="900" fill="#f0f0f0"  letter-spacing="-3.5">Every rep.</text>
+    <text x="80" y="316" font-family="Inter, system-ui, sans-serif" font-size="84" font-weight="900" fill="#f0f0f0"  letter-spacing="-3.5">Every PR.</text>
+
+    <!-- "Every gain." with glow layer -->
+    <text x="80" y="414" font-family="Inter, system-ui, sans-serif" font-size="84" font-weight="900" fill="#c8f73a" letter-spacing="-3.5" filter="url(#blur-sm)" opacity="0.6">Every gain.</text>
+    <text x="80" y="414" font-family="Inter, system-ui, sans-serif" font-size="84" font-weight="900" fill="#c8f73a" letter-spacing="-3.5">Every gain.</text>
+
+    <!-- subtitle -->
+    <text x="80" y="470" font-family="Inter, system-ui, sans-serif" font-size="17" fill="#666666" letter-spacing="-0.2">Log workouts, track personal bests, and break down your muscle focus.</text>
+
+    <!-- CTA pill -->
+    <rect x="80" y="500" width="172" height="48" rx="13" fill="#c8f73a"/>
+    <text x="166" y="524" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700" fill="#0f0f0f" text-anchor="middle" dominant-baseline="central" letter-spacing="-0.2">Get started →</text>
+
+    <!-- ── RIGHT: stat cards ── -->
+
+    <!-- Card 1 — This week  (top-left, −4°) -->
+    <g transform="rotate(-4, 750, 196)">
+      <rect x="645" y="149" width="210" height="95" rx="14" fill="rgba(255,255,255,0.035)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+      <rect x="645" y="149" width="210" height="1"  rx="1"  fill="rgba(255,255,255,0.07)"/>
+      <text x="661" y="171" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#666" letter-spacing="0.1em">THIS WEEK</text>
+      <text x="661" y="210" font-family="Inter, system-ui, sans-serif" font-size="36" font-weight="700" fill="#f0f0f0" letter-spacing="-1.5">4</text>
+      <text x="661" y="231" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#666">workouts</text>
+    </g>
+
+    <!-- Card 2 — Streak  (top-right, +5°) -->
+    <g transform="rotate(5, 982, 183)">
+      <rect x="877" y="136" width="210" height="95" rx="14" fill="rgba(255,255,255,0.035)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+      <rect x="877" y="136" width="210" height="1"  rx="1"  fill="rgba(255,255,255,0.07)"/>
+      <text x="893" y="158" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#666" letter-spacing="0.1em">STREAK</text>
+      <text x="893" y="197" font-family="Inter, system-ui, sans-serif" font-size="36" font-weight="700" fill="#f0f0f0" letter-spacing="-1.5">6</text>
+      <text x="893" y="218" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#666">weeks</text>
+    </g>
+
+    <!-- Card 3 — Volume  (mid-left, +3°) -->
+    <g transform="rotate(3, 750, 334)">
+      <rect x="645" y="287" width="210" height="95" rx="14" fill="rgba(255,255,255,0.035)" stroke="rgba(200,247,58,0.18)" stroke-width="1"/>
+      <rect x="645" y="287" width="210" height="1"  rx="1"  fill="rgba(255,255,255,0.07)"/>
+      <text x="661" y="309" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#666" letter-spacing="0.1em">VOLUME</text>
+      <text x="661" y="348" font-family="Inter, system-ui, sans-serif" font-size="36" font-weight="700" fill="#f0f0f0" letter-spacing="-1.5">12.4k</text>
+      <text x="661" y="369" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#666">kg this week</text>
+    </g>
+
+    <!-- Card 4 — Last session  (mid-right, −5°) -->
+    <g transform="rotate(-5, 982, 348)">
+      <rect x="877" y="301" width="210" height="95" rx="14" fill="rgba(255,255,255,0.035)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+      <rect x="877" y="301" width="210" height="1"  rx="1"  fill="rgba(255,255,255,0.07)"/>
+      <text x="893" y="323" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#666" letter-spacing="0.1em">LAST SESSION</text>
+      <text x="893" y="362" font-family="Inter, system-ui, sans-serif" font-size="36" font-weight="700" fill="#c8f73a" letter-spacing="-1.5">Today</text>
+      <text x="893" y="383" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#666">keep it up</text>
+    </g>
+
+    <!-- ── Personal bests card  (bottom, +1°) ── -->
+    <g transform="rotate(1, 813, 520)">
+      <rect x="645" y="436" width="442" height="168" rx="14" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <rect x="645" y="436" width="442" height="1"   rx="1"  fill="rgba(255,255,255,0.07)"/>
+      <text x="661" y="458" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#666" letter-spacing="0.1em">PERSONAL BESTS</text>
+
+      <!-- PR row 1 -->
+      <circle cx="661" cy="485" r="4" fill="#c8f73a"/>
+      <text x="674" y="485" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="500" fill="#e0e0e0" dominant-baseline="central">Bench Press</text>
+      <text x="674" y="499" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#555" dominant-baseline="central">Chest</text>
+      <text x="1010" y="485" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#c8f73a" text-anchor="end" dominant-baseline="central">100 kg</text>
+      <text x="1018" y="485" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#555" dominant-baseline="central">× 5</text>
+
+      <!-- PR row 2 -->
+      <circle cx="661" cy="516" r="4" fill="#4ade80"/>
+      <text x="674" y="516" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="500" fill="#e0e0e0" dominant-baseline="central">Squat</text>
+      <text x="1010" y="516" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#4ade80" text-anchor="end" dominant-baseline="central">140 kg</text>
+      <text x="1018" y="516" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#555" dominant-baseline="central">× 3</text>
+
+      <!-- PR row 3 -->
+      <circle cx="661" cy="547" r="4" fill="#60a5fa"/>
+      <text x="674" y="547" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="500" fill="#e0e0e0" dominant-baseline="central">Deadlift</text>
+      <text x="1010" y="547" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#60a5fa" text-anchor="end" dominant-baseline="central">170 kg</text>
+      <text x="1018" y="547" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#555" dominant-baseline="central">× 1</text>
+
+      <!-- PR row 4 -->
+      <circle cx="661" cy="578" r="4" fill="#f472b6"/>
+      <text x="674" y="578" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="500" fill="#e0e0e0" dominant-baseline="central">OHP</text>
+      <text x="1010" y="578" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#f472b6" text-anchor="end" dominant-baseline="central">65 kg</text>
+      <text x="1018" y="578" font-family="Inter, system-ui, sans-serif" font-size="12" fill="#555" dominant-baseline="central">× 5</text>
+    </g>
+  </g>
+</svg>

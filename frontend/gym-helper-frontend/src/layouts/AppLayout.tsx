@@ -4,6 +4,7 @@ import type { LucideIcon } from 'lucide-react'
 import { Activity, Dumbbell, LogOut, MapPin, Menu, Plus, X } from 'lucide-react'
 import { cn } from '../lib/cn'
 import { useAuth } from '../hooks/useAuth'
+import { Logo } from '../components/Logo'
 
 
 function NavItem({ to, label, Icon }: { to: string; label: string; Icon: LucideIcon }) {
@@ -61,7 +62,7 @@ export function AppLayout() {
   return (
     <div className="flex min-h-svh flex-col text-left">
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-(--border) bg-(--bg) px-5 py-3.5">
-        <Link to="/home" className="text-[18px] font-medium text-(--text-h)">Gym Helper</Link>
+        <Link to="/home"><Logo size={20} /></Link>
 
         <div ref={menuRef} className="relative">
           <button
