@@ -1,4 +1,4 @@
-import { ChevronUp, Plus, Sparkles, Trash2 } from 'lucide-react'
+import { ChevronDown, ChevronUp, Plus, Sparkles, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Alert, Button, CTACard, ExerciseGroupSkeleton, HintRow, Input, Select, Skeleton } from '../components'
 import { useExercises } from '../hooks/useExercises'
